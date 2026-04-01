@@ -1,0 +1,11 @@
+public enum TriggerTime {
+    BIG_TURN_START,
+    AFTER_TILE_PICK,
+    AFTER_DIR_PICK,
+    AFTER_PICKUP,
+    BEFORE_SOW,
+    AFTER_SOW,
+    BEFORE_CAPTURE,
+    AFTER_CAPTURE,
+    END_TURN
+}
