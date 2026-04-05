@@ -1,3 +1,5 @@
+package oanquan;
+
 public enum TriggerTime {
     BIG_TURN_START,
     AFTER_TILE_PICK,
