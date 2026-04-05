@@ -1,3 +1,5 @@
+package oanquan;
+
 import java.util.Random;
 
 public class Tile {

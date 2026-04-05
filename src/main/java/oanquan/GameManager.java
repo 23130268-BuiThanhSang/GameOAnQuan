@@ -1,9 +1,14 @@
+package oanquan;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class GameManager {
     public Tile[] board;
     public Player player1;
     public Player player2;
     public Player currentPlayer;
-
+    public List<Integer> lastAnimationPath = new ArrayList<>();
     public GameManager(String p1Name, String p2Name) {
         player1 = new Player(p1Name, 1);
         player2 = new Player(p2Name, 2);
@@ -41,6 +46,8 @@ public class GameManager {
             board[currentTurn.currentTileIndex].citizenPieces++;
             currentTurn.piecesInHand--;
 
+            currentTurn.animationPath.add(currentTurn.currentTileIndex);
+
             executeHooks(TriggerTime.AFTER_SOW, currentTurn);
 
             if (currentTurn.piecesInHand == 0) {
@@ -62,6 +69,7 @@ public class GameManager {
         }
 
         executeHooks(TriggerTime.END_TURN, currentTurn);
+        this.lastAnimationPath = currentTurn.animationPath;
         switchTurn();
     }
 
@@ -85,6 +93,8 @@ public class GameManager {
             double captured = board[targetIndex].calcScore();
             board[targetIndex].pickUpPieces();
             currentPlayer.score += captured;
+
+            currentTurn.animationPath.add(targetIndex);
 
             executeHooks(TriggerTime.AFTER_CAPTURE, currentTurn);
 

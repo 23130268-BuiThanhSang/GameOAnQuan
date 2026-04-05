@@ -1,3 +1,5 @@
+package oanquan;
+
 public abstract class Card {
     public Effect effect;
 
