@@ -1,3 +1,5 @@
+package oanquan;
+
 public abstract class Effect {
     public boolean haveLimit;
     public int turnleft;
