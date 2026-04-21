@@ -10,4 +10,5 @@ public class GameTurnResponse {
     public Map<String, TileDto> board;
     public List<String> animationPath;
     public String message;
+    public Map<String, Integer> capturedCount;
 }

@@ -91,8 +91,14 @@ public class GameManager {
             executeHooks(TriggerTime.BEFORE_CAPTURE, currentTurn);
 
             double captured = board[targetIndex].calcScore();
+            int actualPieces = board[targetIndex].mandarinPieces + board[targetIndex].citizenPieces;
+
+            // Bốc sạch quân ra khỏi ô
             board[targetIndex].pickUpPieces();
+
+            // CỘNG VÀO TÀI KHOẢN NGƯỜI CHƠI
             currentPlayer.score += captured;
+            currentPlayer.capturedCount += actualPieces;
 
             currentTurn.animationPath.add(targetIndex);
 

@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/api/game")
 public class GameController {
 
@@ -27,7 +28,9 @@ public class GameController {
         response.scores = new HashMap<>();
         response.scores.put("player1", (int) game.player1.score);
         response.scores.put("player2", (int) game.player2.score);
-
+        response.capturedCount = new HashMap<>();
+        response.capturedCount.put("player1", game.player1.capturedCount);
+        response.capturedCount.put("player2", game.player2.capturedCount);
         response.board = new HashMap<>();
         for (int i = 0; i < 12; i++) {
             Tile tile = game.board[i];
@@ -43,6 +46,34 @@ public class GameController {
         }
 
         response.message = "Move executed successfully.";
+        return response;
+    }
+
+    @GetMapping("/board")
+    public GameTurnResponse getInitialBoard() {
+        GameTurnResponse response = new GameTurnResponse();
+
+        response.status = "success";
+        response.currentPlayer = game.currentPlayer.playerId;
+
+        response.scores = new HashMap<>();
+        response.scores.put("player1", (int) game.player1.score);
+        response.scores.put("player2", (int) game.player2.score);
+        response.capturedCount = new HashMap<>();
+        response.capturedCount.put("player1", game.player1.capturedCount);
+        response.capturedCount.put("player2", game.player2.capturedCount);
+        response.board = new HashMap<>();
+        for (int i = 0; i < 12; i++) {
+            Tile tile = game.board[i];
+            response.board.put(
+                    BoardMapper.getTileName(i),
+                    new TileDto(tile.mandarinPieces, tile.citizenPieces, tile.mult)
+            );
+        }
+
+        response.animationPath = new ArrayList<>();
+        response.message = "Initial board loaded.";
+
         return response;
     }
 }
