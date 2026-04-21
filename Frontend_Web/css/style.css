@@ -1,0 +1,290 @@
+/**
+ * @file style.css
+ * @description Style sheet cho Game Ô Ăn Quan - Phong cách Dân gian Việt Nam
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-image: url('../assets/images/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-color: #e6d5b8;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    color: white;
+    font-family: 'Times New Roman', Times, serif;
+    gap: 30px;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+    z-index: -1;
+}
+.player-tray {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    width: 85vw;
+    padding: 10px 30px;
+    min-height: 120px;
+
+    background: rgba(60, 35, 20, 0.85);
+    border: 2px solid #bda061;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.score-board {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+.avatar-box, .card-slot {
+    border: 1px dashed #bda061;
+    color: #bda061;
+    padding: 12px 25px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.3);
+}
+.board {
+    position: relative;
+    width: 85vw;
+    aspect-ratio: 3 / 1;
+    max-height: 60vh;
+    margin: 0 auto;
+
+    background-color: rgba(230, 200, 150, 0.2);
+    backdrop-filter: blur(2px);
+
+    border: 3px solid rgba(139, 69, 19, 0.6);
+    border-radius: 1000px;
+    overflow: hidden;
+
+    box-shadow: inset 0 0 15px rgba(139, 69, 19, 0.2), 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.quan-zone, .dan-zone {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    border: 1px solid rgba(139, 69, 19, 0.3);
+
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
+
+    transition: background-color 0.2s ease;
+}
+
+.dan-zone:hover, .quan-zone:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.quan-zone {
+    width: 15%;
+    height: 100%;
+    top: 0;
+}
+.quan-zone#quan-left { left: 0; border-right: 2px solid rgba(139, 69, 19, 0.6); }
+.quan-zone#quan-right { right: 0; border-left: 2px solid rgba(139, 69, 19, 0.6); }
+
+.dan-zone {
+    width: 14%;
+    height: 50%;
+}
+
+#dan-6 { top: 0; left: 71%; }
+#dan-7 { top: 0; left: 57%; }
+#dan-8 { top: 0; left: 43%; }
+#dan-9 { top: 0; left: 29%; }
+#dan-10 { top: 0; left: 15%; }
+
+#dan-0 { top: 50%; left: 15%; }
+#dan-1 { top: 50%; left: 29%; }
+#dan-2 { top: 50%; left: 43%; }
+#dan-3 { top: 50%; left: 57%; }
+#dan-4 { top: 50%; left: 71%; }
+
+/* ==========================================
+   4. UI CHUẨN CHO QUÂN CỜ & HIỂN THỊ TÓM TẮT
+   ========================================== */
+
+/* Viền hào quang vàng đồng cho tất cả các viên ngọc */
+.gem-token {
+    filter: drop-shadow(0 0 5px rgba(189, 160, 97, 0.8)) drop-shadow(0 0 2px #ffd700);
+    transition: transform 0.2s;
+}
+
+/* Quân Quan: Ép cứng kích thước nhỏ gọn */
+.quan-gem {
+    width: 60px !important;
+    height: 60px !important;
+    object-fit: contain;
+}
+
+/* Container cho quân dân (Xếp chồng) */
+.stacked-view {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* Quân Dân: Ép cứng kích thước nhỏ gọn */
+.dan-gem {
+    width: 30px !important;
+    height: 30px !important;
+    object-fit: contain;
+    position: absolute;
+}
+
+/* Badge đếm số ở góc dưới cùng bên phải */
+.count-badge {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    background: linear-gradient(135deg, #bda061, #8f6d4d);
+    color: #3c2319;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    border: 1px solid #ffd700;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+    z-index: 10;
+    pointer-events: none; /* [QUAN TRỌNG] Click xuyên qua được */
+}
+
+/* Chỉ số nhân (Mult-badge) ở góc trên cùng bên trái */
+.mult-badge {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background-color: #8b0000; /* Nền đỏ đô quyền lực */
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 0.9rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #ffd700;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* ==========================================
+   5. HIỆU ỨNG VFX RẢI QUÂN (RIPPLE VFX)
+   ========================================== */
+.ripple-effect {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 215, 0, 0.9);
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, rgba(255, 215, 0, 0) 60%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 20;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), inset 0 0 10px rgba(255, 215, 0, 0.5);
+    mix-blend-mode: screen;
+}
+#anim-hand {
+    width: 40px !important;
+    height: auto !important;
+    transform-origin: top left;
+}
+#quan-right .count-badge,
+#quan-left .count-badge {
+    bottom: auto !important;
+    right: auto !important;
+    left: 50% !important;
+    top: 75% !important;
+    transform: translateX(-50%) !important;
+}
+.player-tray.active-turn {
+    border-color: #00ff00;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5), inset 0 0 10px rgba(0, 255, 0, 0.2);
+    transform: scale(1.02);
+}
+
+
+.player-tray.active-turn .avatar-box {
+    background: rgba(0, 255, 0, 0.2);
+    border-color: #00ff00;
+    color: #fff;
+    text-shadow: 0 0 5px #00ff00;
+}
+
+/* Kho chứa quân thực tế ăn được */
+.captured-box {
+    border: 1px solid #40e0d0;
+    background: rgba(64, 224, 208, 0.15);
+    color: #40e0d0;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    min-width: 100px;
+    text-align: center;
+    box-shadow: inset 0 0 5px rgba(64, 224, 208, 0.3);
+}
+
+
+.active-turn .captured-box {
+    box-shadow: 0 0 10px rgba(64, 224, 208, 0.5);
+    border-color: #7fffd4;
+    color: #7fffd4;
+}
+
+.captured-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* Khu vực hiển thị ngọc (rộng một chút để chứa các viên ngọc) */
+.captured-visuals {
+    position: relative;
+    width: 50px;
+    height: 40px;
+    min-width: 50px;
+    min-height: 40px;
+    pointer-events: none;
+}
+
+/* Các viên ngọc được ép size nhỏ nhắn, có viền sáng */
+.captured-visuals img {
+    position: absolute;
+    width: 25px !important;
+    height: 25px !important;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+    top: 50%;
+    left: 50%;
+}

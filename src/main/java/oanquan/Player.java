@@ -6,7 +6,7 @@ public class Player {
     public String name;
     public double score;
     public int playerId;
-
+    int capturedCount = 0;
     public Map<TriggerTime, List<Effect>> activeEffects;
 
     public Player(String name, int playerId) {
