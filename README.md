@@ -1,57 +1,96 @@
-# Business Requirement Document (BRD) - Dự án Game Ô Ăn Quan: Expansion Edition (Effect Cards)
+Business Requirement Document (BRD) - Dự án Game Ô Ăn Quan: Expansion Edition (Effect Cards)
+1. Lời nói đầu (Preface) [1]
+Tài liệu này xác định các yêu cầu nghiệp vụ và kỹ thuật cho dự án trò chơi "Ô Ăn Quan" phiên bản số hóa. Đối tượng đọc chính là giảng viên hướng dẫn và sinh viên thực hiện dự án.
 
-## 1. Giới thiệu (Introduction)
-Dự án này phát triển một hệ thống giải trí (Entertainment system) mô phỏng trò chơi Ô Ăn Quan truyền thống nhưng được tích hợp thêm cơ chế **Thẻ hiệu ứng (Effect Cards)** để tăng tính chiến thuật và sự biến hóa trong lối chơi [5].
+Phiên bản: 1.0
 
-## 2. Mục tiêu dự án (Project Goals)
-*   **Tính sáng tạo và tiến hóa:** Phát triển dựa trên nền tảng cũ nhưng có khả năng tiến hóa (Evolution) để tích hợp các tính năng mới mà không làm hỏng cấu trúc cốt lõi [6, 7].
-*   **Trải nghiệm người dùng:** Đảm bảo tính chấp nhận được (Acceptability) thông qua giao diện trực quan, giúp người chơi dễ dàng nắm bắt các thẻ hiệu ứng mới [3, 8].
-*   **Độ tin cậy:** Hệ thống phải xử lý chính xác các logic chồng chéo khi nhiều thẻ hiệu ứng được kích hoạt cùng lúc [2, 9].
+Trạng thái: Bản thảo đồ án môn học.
 
-## 3. Các bên liên quan (Stakeholders)
-*   **Người chơi (End-users):** Đối tượng chính, đòi hỏi tính giải trí và luật chơi công bằng [10].
-*   **Nhà phát triển (Developers):** Cần bản đặc tả chi tiết để thiết kế kiến trúc hệ thống linh hoạt [11].
-*   **Người thiết kế luật chơi (Game Designer):** Đưa ra các yêu cầu về cân bằng game và thuộc tính thẻ bài.
+2. Giới thiệu (Introduction) [2]
+Dự án này phát triển một hệ thống giải trí (Entertainment system) mô phỏng trò chơi Ô Ăn Quan truyền thống nhưng được tích hợp thêm cơ chế Thẻ hiệu ứng (Effect Cards) và hệ số điểm để tăng tính chiến thuật và sự biến hóa trong lối chơi.
 
-## 4. Yêu cầu chức năng (Functional Requirements)
+3. Thuật ngữ (Glossary) [3]
+Ô Quan: Hai ô hình bán nguyệt ở hai đầu bàn cờ.
 
-### 4.1. Cơ chế chơi cơ bản (Core Gameplay)
-*   **Thiết lập bàn cờ:** Khởi tạo 10 ô dân (5 quân mỗi ô) và 2 ô quan [Luật truyền thống].
-*   **Rải quân (Sowing):** Cho phép người chơi chọn ô và hướng rải quân (xuôi hoặc ngược chiều kim đồng hồ).
-*   **Tính điểm:** Tự động thu thập quân và cộng điểm khi đạt điều kiện "ăn" quân.
+Ô Dân: 10 ô hình vuông chia đều cho hai người chơi.
 
-### 4.2. Hệ thống Thẻ hiệu ứng (Effect Card System) - *Tính năng mở rộng*
-*   **Khởi tạo thẻ:** Mỗi người chơi bắt đầu ván đấu với một số lượng thẻ ngẫu nhiên từ bộ bài chung.
-*   **Kích hoạt thẻ:** Người chơi có thể sử dụng thẻ trước hoặc sau khi thực hiện lượt rải quân (tùy loại thẻ).
-*   **Các loại hiệu ứng (Ví dụ):**
-    *   *Thẻ "Đổi chiều":* Đổi hướng rải quân ngay lập tức.
-    *   *Thẻ "Lá chắn":* Bảo vệ một ô dân khỏi bị đối phương ăn trong 1 lượt.
-    *   *Thẻ "Thêm quân":* Thêm 1-2 quân vào một ô bất kỳ.
-*   **Quản lý lượt:** Hệ thống phải kiểm soát việc sử dụng thẻ để không vi phạm quy trình lượt chơi đã định nghĩa [12, 13].
+Rải quân: Hành động lấy quân từ một ô và rải lần lượt vào các ô kế tiếp.
 
-## 5. Yêu cầu phi chức năng (Non-functional Requirements)
+Thẻ Sự Kiện: Các hiệu ứng đặc biệt làm thay đổi luật chơi tạm thời hoặc vĩnh viễn khi áp dụng.
 
-### 5.1. Khả năng bảo trì (Maintainability)
-*   Kiến trúc phần mềm phải được thiết kế theo dạng Module (ví dụ: dùng Pattern Observer hoặc MVC) để dễ dàng thêm các loại thẻ hiệu ứng mới trong tương lai mà không cần viết lại mã nguồn cơ bản [2, 14, 15].
+4. Định nghĩa yêu cầu người dùng (User Requirements Definition) [4]
+Dịch vụ cung cấp:
 
-### 5.2. Hiệu quả (Efficiency)
-*   Việc xử lý các hiệu ứng đồ họa của thẻ bài không được gây trễ (lag) làm ảnh hưởng đến luồng xử lý logic của game [3, 16].
+Người chơi có thể chọn ô, chọn hướng đi và thực hiện rải quân đúng luật.
 
-### 5.3. Tính đúng đắn (Dependability)
-*   Hệ thống phải có cơ chế kiểm tra điều kiện (Validation) để tránh việc sử dụng thẻ sai luật hoặc gây lỗi trạng thái bàn cờ [2, 17].
+Hệ thống tự động tính điểm và nhận diện các tình huống "ăn quân", "ăn chuỗi".
 
-## 6. User Stories (Tiếp cận Agile)
+Mỗi người chơi được rút 1 thẻ sự kiện ngẫu nhiên sau mỗi 3 lượt đi.
+
+Yêu cầu phi chức năng [5]:
+
+Khả năng bảo trì (Maintainability): Kiến trúc phần mềm phải được thiết kế theo dạng Module (ví dụ: dùng Pattern Observer hoặc MVC) để dễ dàng thêm các loại thẻ hiệu ứng mới trong tương lai mà không cần viết lại mã nguồn cơ bản.
+
+Hiệu quả (Efficiency): Việc xử lý các hiệu ứng đồ họa của thẻ bài không được gây trễ (lag) làm ảnh hưởng đến luồng xử lý logic của game.
+
+Tính đúng đắn (Dependability): Hệ thống phải có cơ chế kiểm tra điều kiện (Validation) để tránh việc sử dụng thẻ sai luật hoặc gây lỗi trạng thái bàn cờ.
+
+5. Kiến trúc hệ thống (System Architecture) [6]
+Hệ thống được thiết kế theo mô hình MVC (Model-View-Controller):
+
+Model: Quản lý mảng dữ liệu bàn cờ (12 ô), số lượng quân và danh sách thẻ sự kiện.
+
+View: Hiển thị bàn cờ, hiệu ứng di chuyển và bảng thông báo sự kiện.
+
+Controller: Xử lý logic rải quân, kiểm tra va chạm, áp dụng hiệu ứng thẻ bài, tính toán điểm số cuối cùng và chuyển lượt.
+
+6. Đặc tả yêu cầu hệ thống (System Requirements Specification) [7]
+6.1. Logic trò chơi & Hệ số điểm
+Khởi tạo: 10 ô dân (5 dân/ô), 2 ô quan (1 quan/ô).
+
+Hệ số điểm (New): Mỗi ô chứa dân sẽ có hệ số điểm xuất hiện ngẫu nhiên từ x1 đến x5.
+
+Công thức tính điểm: Điểm lượt ăn = (Số lượng dân ăn được) x (Hệ số điểm tại ô đó).
+
+Luật ăn quân: Ăn khi phía sau ô rải xong là 1 ô trống, tiếp theo là 1 ô có quân.
+
+6.2. Cơ chế Thẻ Sự Kiện (Mở rộng) [8]
+Thẻ "Đổi chiều": Buộc đối thủ đi ngược hướng đã chọn.
+
+Thẻ "Hố sâu": Đặt bẫy tại ô trống, tiêu diệt quân khi đi vào.
+
+Thẻ "Ngắt lượt": Dừng hành động rải quân ngay lập tức khi gặp ô này.
+
+7. User Stories (Tiếp cận Agile) [9, 10]
 Dựa trên lý thuyết Agile, yêu cầu được mô tả qua góc nhìn người dùng [18, 19]:
-*   **Là một người chơi**, tôi muốn rút thẻ hiệu ứng ngẫu nhiên để mỗi ván đấu đều có sự khác biệt và thú vị.
-*   **Là một người chơi**, tôi muốn xem mô tả của thẻ hiệu ứng trước khi sử dụng để tránh nhầm lẫn chiến thuật.
-*   **Là một người chơi**, tôi muốn hệ thống hiển thị rõ ô nào đang chịu ảnh hưởng của thẻ hiệu ứng (ví dụ: đang được bảo vệ).
 
-## 7. Mô hình hệ thống (System Modeling)
-*   **Context Model:** Chỉ ra sự tương tác giữa Người chơi - Giao diện Game - Bộ quản lý thẻ bài [20].
-*   **State Diagram:** Mô tả các trạng thái của ván đấu: *Chờ lượt -> Chọn ô -> Chọn thẻ -> Rải quân -> Kiểm tra hiệu ứng -> Kết thúc lượt* [13, 21].
+Là một người chơi, tôi muốn rút thẻ hiệu ứng ngẫu nhiên để mỗi ván đấu đều có sự khác biệt và thú vị.
 
-## 8. Kế hoạch kiểm thử (Testing Plan)
-*   **Unit Testing:** Kiểm tra từng hiệu ứng thẻ bài riêng lẻ [22, 23].
-*   **Component Testing:** Kiểm tra sự tương tác giữa thẻ hiệu ứng và logic rải quân truyền thống [24].
-*   **User Testing (Alpha/Beta):** Cho phép người chơi trải nghiệm để đánh giá độ cân bằng của các thẻ bài mới [25].
-C
+Là một người chơi, tôi muốn xem mô tả của thẻ hiệu ứng trước khi sử dụng để tránh nhầm lẫn chiến thuật.
+
+Là một người chơi, tôi muốn hệ thống hiển thị rõ ô nào đang chịu ảnh hưởng của thẻ hiệu ứng (ví dụ: đang được bảo vệ).
+
+Là người chơi, tôi muốn thấy rõ ô nào đang có hệ số điểm cao để ưu tiên tấn công.
+
+8. Mô hình hệ thống (System Models) [11]
+Context Model: Chỉ ra sự tương tác giữa Người chơi - Giao diện Game - Bộ quản lý thẻ bài.
+
+State Diagram: Mô tả các trạng thái của ván đấu: Chờ lượt -> Chọn ô -> Chọn thẻ -> Rải quân -> Kiểm tra hiệu ứng -> Kết thúc lượt.
+
+9. Phát triển hệ thống (System Evolution) [12]
+Dự kiến thay đổi: Nâng cấp AI để người dùng có thể chơi với máy.
+
+Mở rộng: Thêm chế độ chơi qua mạng LAN hoặc tích hợp bảng xếp hạng online.
+
+10. Kế hoạch kiểm thử (Testing Plan) [13]
+Unit Testing: Kiểm tra từng hiệu ứng thẻ bài riêng lẻ.
+
+Component Testing: Kiểm tra sự tương tác giữa thẻ hiệu ứng và logic rải quân truyền thống.
+
+User Testing (Alpha/Beta): Cho phép người chơi trải nghiệm để đánh giá độ cân bằng của các thẻ bài mới.
+
+11. Phụ lục (Appendices) [14]
+Yêu cầu phần cứng: Máy tính có cài đặt môi trường chạy (JVM cho Java, .NET cho C#, hoặc trình duyệt cho Web).
+
+Thiết kế Database (nếu có): Lưu cấu hình các loại thẻ sự kiện dưới dạng file JSON.
+
