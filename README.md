@@ -166,7 +166,8 @@ Hệ thống bao gồm:
 - 8.2. AI chơi với máy. 
 - 8.3. Lưu lịch sử trận đấu. 
 - 8.4. Leaderboard. 
-- 8.5. Mobile app version. 
+- 8.5. Mobile app version.
+- 8.6. Phát triển mở rộng theo thẻ kỹ năng.
 
 ---
 
