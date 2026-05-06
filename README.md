@@ -135,7 +135,8 @@ Hệ thống bao gồm:
   - Hiển thị animation theo đường đi (animationPath)
   - Hiệu ứng ăn quân
   - Hiệu ứng kết thúc lượt
-  - Callback sau animation để mở khóa lượt 
+  - Callback sau animation để mở khóa lượt
+  - Hiển thị màn hình tổng kết và phân thắng thua
 
 ### 6.2. Non-functional Requirements (Yêu cầu phi chức năng)
 - 6.2.1. Hiệu năng: phản hồi < 1s. 
