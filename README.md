@@ -92,11 +92,50 @@ Hệ thống bao gồm:
 ## 6. System Requirements Specification (Yêu cầu hệ thống)
 
 ### 6.1. Functional Requirements (Yêu cầu chức năng)
-- 6.1.1. FR1 – Quản lý Menu (UC1). 
-- 6.1.2. FR2 – Khởi tạo bàn cờ (UC2). 
-- 6.1.3. FR3 – Thực hiện nước đi (UC3). 
-- 6.1.4. FR4 – Logic ăn quân (UC4). 
-- 6.1.5. FR5 – Animation & hiệu ứng (UC5). 
+
+- **6.1.1. FR1 – Quản lý Menu (UC1).**
+  - Hiển thị menu chính
+  - Nhập tên người chơi
+  - Bật/tắt âm thanh
+  - Chuyển màn hình
+  - Hiển thị luật chơi (popup/modal)
+  - Lưu cấu hình người chơi (LocalStorage)
+  - Điều hướng quay lại menu từ màn chơi
+
+- **6.1.2. FR2 – Khởi tạo bàn cờ (UC2).**
+  - Tạo 12 ô (10 dân, 2 quan)
+  - Reset trạng thái game
+  - Hiển thị lại giao diện
+  - Gọi API lấy dữ liệu bàn cờ mặc định
+  - Khởi tạo điểm số người chơi về 0
+  - Render quân vào từng ô theo dữ liệu
+
+- **6.1.3. FR3 – Thực hiện nước đi (UC3).**
+  - Chọn ô hợp lệ
+  - Chọn hướng rải
+  - Gửi request `/move`
+  - Kiểm tra tính hợp lệ của nước đi
+  - Cập nhật trạng thái bàn cờ sau mỗi lượt
+  - Khóa input trong khi đang xử lý lượt
+  - Chuyển lượt tiếp theo sau khi hoàn tất
+
+- **6.1.4. FR4 – Logic ăn quân (UC4).**
+  - Kiểm tra điều kiện ăn
+  - Tính điểm
+  - Cập nhật kho người chơi
+  - Xử lý ăn quân liên hoàn
+  - Áp dụng hệ số nhân (nếu có)
+  - Kiểm tra điều kiện kết thúc game
+  - Xác định người thắng/thua
+
+- **6.1.5. FR5 – Animation & hiệu ứng (UC5).**
+  - Hiển thị chuyển động quân
+  - Đồng bộ âm thanh
+  - Hiển thị điểm
+  - Hiển thị animation theo đường đi (animationPath)
+  - Hiệu ứng ăn quân
+  - Hiệu ứng kết thúc lượt
+  - Callback sau animation để mở khóa lượt 
 
 ### 6.2. Non-functional Requirements (Yêu cầu phi chức năng)
 - 6.2.1. Hiệu năng: phản hồi < 1s. 
