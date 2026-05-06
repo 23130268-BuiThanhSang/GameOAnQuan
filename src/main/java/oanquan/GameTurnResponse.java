@@ -11,4 +11,6 @@ public class GameTurnResponse {
     public List<String> animationPath;
     public String message;
     public Map<String, Integer> capturedCount;
+
+    public String winner;
 }
