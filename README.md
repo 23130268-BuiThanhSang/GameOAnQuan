@@ -1,67 +1,154 @@
-Business Requirement Document (BRD) - Dự án Game Ô Ăn Quan: Expansion Edition (Effect Cards)
+# BUSINESS REQUIREMENTS DOCUMENT (BRD)
+## Hệ thống: Game Ô Ăn Quan (Web-based)
 
-1. Lời nói đầu (Preface) [1]
-Tài liệu này xác định các yêu cầu nghiệp vụ và kỹ thuật cho dự án trò chơi "Ô Ăn Quan" phiên bản số hóa. Đối tượng đọc chính là giảng viên hướng dẫn và sinh viên thực hiện dự án.
-Phiên bản: 1.0
-Trạng thái: Bản thảo đồ án môn học.
+---
 
-3. Giới thiệu (Introduction) [2]
-Dự án này phát triển một hệ thống giải trí (Entertainment system) mô phỏng trò chơi Ô Ăn Quan truyền thống nhưng được tích hợp thêm cơ chế Thẻ hiệu ứng (Effect Cards) và hệ số điểm để tăng tính chiến thuật và sự biến hóa trong lối chơi.
+## 1. Preface (Giới thiệu tài liệu)
 
-4. Thuật ngữ (Glossary) [3]
-Ô Quan: Hai ô hình bán nguyệt ở hai đầu bàn cờ.
-Ô Dân: 10 ô hình vuông chia đều cho hai người chơi.
-Rải quân: Hành động lấy quân từ một ô và rải lần lượt vào các ô kế tiếp.
-Thẻ Sự Kiện: Các hiệu ứng đặc biệt làm thay đổi luật chơi tạm thời hoặc vĩnh viễn khi áp dụng.
+Tài liệu này mô tả các yêu cầu nghiệp vụ (business requirements) cho hệ thống game Ô ăn quan dạng web (Client–Server). 
 
-5. Định nghĩa yêu cầu người dùng (User Requirements Definition) [4]
-Dịch vụ cung cấp:
-Người chơi có thể chọn ô, chọn hướng đi và thực hiện rải quân đúng luật.
-Hệ thống tự động tính điểm và nhận diện các tình huống "ăn quân", "ăn chuỗi".
-Mỗi người chơi được rút 1 thẻ sự kiện ngẫu nhiên sau mỗi 3 lượt đi.
-Yêu cầu phi chức năng [5]:
-Khả năng bảo trì (Maintainability): Kiến trúc phần mềm phải được thiết kế theo dạng Module (ví dụ: dùng Pattern Observer hoặc MVC) để dễ dàng thêm các loại thẻ hiệu ứng mới trong tương lai mà không cần viết lại mã nguồn cơ bản.
-Hiệu quả (Efficiency): Việc xử lý các hiệu ứng đồ họa của thẻ bài không được gây trễ (lag) làm ảnh hưởng đến luồng xử lý logic của game.
-Tính đúng đắn (Dependability): Hệ thống phải có cơ chế kiểm tra điều kiện (Validation) để tránh việc sử dụng thẻ sai luật hoặc gây lỗi trạng thái bàn cờ.
+### 1.1. Đối tượng đọc:
+- 1.1.1. Stakeholders (giảng viên, khách hàng mô phỏng). 
+- 1.1.2. Developer (frontend/backend). 
+- 1.1.3. Tester. 
 
-6. Kiến trúc hệ thống (System Architecture) [6]
-Hệ thống được thiết kế theo mô hình MVC (Model-View-Controller):
-Model: Quản lý mảng dữ liệu bàn cờ (12 ô), số lượng quân và danh sách thẻ sự kiện.
-View: Hiển thị bàn cờ, hiệu ứng di chuyển và bảng thông báo sự kiện.
-Controller: Xử lý logic rải quân, kiểm tra va chạm, áp dụng hiệu ứng thẻ bài, tính toán điểm số cuối cùng và chuyển lượt.
+### 1.2. Mục đích:
+- 1.2.1. Xác định rõ mục tiêu sản phẩm. 
+- 1.2.2. Định hướng phát triển hệ thống. 
+- 1.2.3. Là cơ sở cho SRS và thiết kế sau này. 
 
-7. Đặc tả yêu cầu hệ thống (System Requirements Specification) [7]
-7.1. Logic trò chơi & Hệ số điểm
-Khởi tạo: 10 ô dân (5 dân/ô), 2 ô quan (1 quan/ô).
-Hệ số điểm (New): Mỗi ô chứa dân sẽ có hệ số điểm xuất hiện ngẫu nhiên từ x1 đến x5.
-Công thức tính điểm: Điểm lượt ăn = (Số lượng dân ăn được) x (Hệ số điểm tại ô đó).
-Luật ăn quân: Ăn khi phía sau ô rải xong là 1 ô trống, tiếp theo là 1 ô có quân.
-7.2. Cơ chế Thẻ Sự Kiện (Mở rộng) [8]
-Thẻ "Đổi chiều": Buộc đối thủ đi ngược hướng đã chọn.
-Thẻ "Hố sâu": Đặt bẫy tại ô trống, tiêu diệt quân khi đi vào.
-Thẻ "Ngắt lượt": Dừng hành động rải quân ngay lập tức khi gặp ô này.
+---
 
-8. User Stories (Tiếp cận Agile) [9, 10]
-Dựa trên lý thuyết Agile, yêu cầu được mô tả qua góc nhìn người dùng:
-Là một người chơi, tôi muốn rút thẻ hiệu ứng ngẫu nhiên để mỗi ván đấu đều có sự khác biệt và thú vị.
-Là một người chơi, tôi muốn xem mô tả của thẻ hiệu ứng trước khi sử dụng để tránh nhầm lẫn chiến thuật.
-Là một người chơi, tôi muốn hệ thống hiển thị rõ ô nào đang chịu ảnh hưởng của thẻ hiệu ứng (ví dụ: đang được bảo vệ).
-Là người chơi, tôi muốn thấy rõ ô nào đang có hệ số điểm cao để ưu tiên tấn công.
+## 2. Introduction (Tổng quan hệ thống)
 
-10. Mô hình hệ thống (System Models) [11]
-Context Model: Chỉ ra sự tương tác giữa Người chơi - Giao diện Game - Bộ quản lý thẻ bài.
-State Diagram: Mô tả các trạng thái của ván đấu: Chờ lượt -> Chọn ô -> Chọn thẻ -> Rải quân -> Kiểm tra hiệu ứng -> Kết thúc lượt.
+### 2.1. Mục tiêu hệ thống
 
-12. Phát triển hệ thống (System Evolution) [12]
-Dự kiến thay đổi: Nâng cấp AI để người dùng có thể chơi với máy.
-Mở rộng: Thêm chế độ chơi qua mạng LAN hoặc tích hợp bảng xếp hạng online.
+Xây dựng một trò chơi Ô ăn quan online:
+- 2.1.1. Mang tính giải trí + giáo dục (trò chơi dân gian). 
+- 2.1.2. Có giao diện trực quan, dễ sử dụng. 
+- 2.1.3. Có thể chơi nhanh trên trình duyệt. 
 
-13. Kế hoạch kiểm thử (Testing Plan) [13]
-Unit Testing: Kiểm tra từng hiệu ứng thẻ bài riêng lẻ.
-Component Testing: Kiểm tra sự tương tác giữa thẻ hiệu ứng và logic rải quân truyền thống.
-User Testing (Alpha/Beta): Cho phép người chơi trải nghiệm để đánh giá độ cân bằng của các thẻ bài mới.
+### 2.2. Phạm vi hệ thống
 
-14. Phụ lục (Appendices) [14]
-Yêu cầu phần cứng: Máy tính có cài đặt môi trường chạy (JVM cho Java, .NET cho C#, hoặc trình duyệt cho Web).
-Thiết kế Database (nếu có): Lưu cấu hình các loại thẻ sự kiện dưới dạng file JSON.
+Hệ thống bao gồm:
+- 2.2.1. Giao diện web (HTML/CSS/JS + GSAP). 
+- 2.2.2. Backend xử lý logic game (Java Spring Boot API). 
+- 2.2.3. Không yêu cầu database phức tạp (có thể dùng LocalStorage). 
 
+### 2.3. Giá trị mang lại
+- 2.3.1. Bảo tồn trò chơi dân gian Việt Nam. 
+- 2.3.2. Trải nghiệm game đơn giản nhưng có chiều sâu chiến thuật. 
+- 2.3.3. Phù hợp học lập trình game cơ bản. 
+
+---
+
+## 3. Glossary (Thuật ngữ)
+
+| Chỉ mục | Thuật ngữ | Ý nghĩa |
+|--------|----------|--------|
+| 3.1 | Ô ăn quan | Game dân gian Việt Nam |
+| 3.2 | Ô dân | Các ô nhỏ chứa quân |
+| 3.3 | Ô quan | Ô lớn ở 2 đầu |
+| 3.4 | Rải quân | Hành động di chuyển quân |
+| 3.5 | Ăn quân | Thu quân vào kho |
+| 3.6 | AnimationPath | Dữ liệu đường đi animation |
+
+---
+
+## 4. User Requirements Definition (Yêu cầu người dùng)
+
+### 4.1. Khả năng tương tác của người chơi:
+- 4.1.1. Nhập tên và thiết lập ban đầu. 
+- 4.1.2. Bắt đầu game / reset game. 
+- 4.1.3. Xem luật chơi. 
+- 4.1.4. Chọn ô và hướng đi để rải quân. 
+- 4.1.5. Quan sát animation trực quan. 
+- 4.1.6. Xem điểm số. 
+
+### 4.2. Trải nghiệm mong muốn:
+- 4.2.1. Giao diện rõ ràng, dễ hiểu. 
+- 4.2.2. Phản hồi nhanh (real-time). 
+- 4.2.3. Có hiệu ứng (animation + âm thanh). 
+- 4.2.4. Không cần đăng nhập phức tạp. 
+
+---
+
+## 5. System Architecture (Kiến trúc tổng thể)
+
+### 5.1. Thành phần công nghệ:
+- 5.1.1. Frontend: HTML, CSS, JavaScript, GSAP. 
+- 5.1.2. Backend: Java Spring Boot REST API. 
+- 5.1.3. Kiến trúc: Client – Server. 
+
+### 5.2. Luồng chính:
+- 5.2.1. Người chơi thao tác trên UI. 
+- 5.2.2. Client gửi request (API). 
+- 5.2.3. Backend xử lý logic game. 
+- 5.2.4. Trả về JSON. 
+- 5.2.5. Frontend render + animation. 
+
+---
+
+## 6. System Requirements Specification (Yêu cầu hệ thống)
+
+### 6.1. Functional Requirements (Yêu cầu chức năng)
+- 6.1.1. FR1 – Quản lý Menu (UC1). 
+- 6.1.2. FR2 – Khởi tạo bàn cờ (UC2). 
+- 6.1.3. FR3 – Thực hiện nước đi (UC3). 
+- 6.1.4. FR4 – Logic ăn quân (UC4). 
+- 6.1.5. FR5 – Animation & hiệu ứng (UC5). 
+
+### 6.2. Non-functional Requirements (Yêu cầu phi chức năng)
+- 6.2.1. Hiệu năng: phản hồi < 1s. 
+- 6.2.2. UI/UX: dễ dùng, trực quan. 
+- 6.2.3. Tương thích: chạy trên Chrome/Edge. 
+- 6.2.4. Khả dụng: không crash khi thao tác sai. 
+- 6.2.5. Maintainability: code tách frontend/backend rõ ràng. 
+
+---
+
+## 7. System Models (Mô hình hệ thống)
+
+### 7.1. Use Case Diagram  
+
+### 7.2. Sequence Diagram:
+- 7.2.1. Menu flow. 
+- 7.2.2. Play turn flow. 
+
+### 7.3. Data Flow:
+- 7.3.1. Client → API → GameManager → Response. 
+
+---
+
+## 8. System Evolution (Phát triển tương lai)
+
+- 8.1. Multiplayer online. 
+- 8.2. AI chơi với máy. 
+- 8.3. Lưu lịch sử trận đấu. 
+- 8.4. Leaderboard. 
+- 8.5. Mobile app version. 
+
+---
+
+## 9. Appendices (Phụ lục)
+
+### 9.1. Công nghệ sử dụng:
+- 9.1.1. Frontend: HTML, CSS, JS, GSAP. 
+- 9.1.2. Backend: Spring Boot. 
+- 9.1.3. API: RESTful. 
+
+### 9.2. Cấu trúc file:
+- 9.2.1. js/core/ → logic game. 
+- 9.2.2. js/ui/ → render + animation. 
+- 9.2.3. api/ → gọi backend. 
+- 9.2.4. GameManager.java → xử lý chính. 
+
+---
+
+## 10. Index (Chỉ mục)
+
+- 10.1. Menu → UC1. 
+- 10.2. Board → UC2. 
+- 10.3. Move → UC3. 
+- 10.4. Capture → UC4. 
+- 10.5. Animation → UC5. 
