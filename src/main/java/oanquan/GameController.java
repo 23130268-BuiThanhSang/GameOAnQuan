@@ -18,6 +18,7 @@ public class GameController {
             response.message = "Invalid move!";
             return response;
         }
+
         game.playTurn(request.startIndex, request.direction);
         response.status = "success";
         response.message = "Move executed successfully.";
@@ -58,6 +59,8 @@ public class GameController {
         for (Integer index : game.lastAnimationPath) {
             response.animationPath.add(BoardMapper.getTileName(index));
         }
+
+        response.scatterEvent = game.lastScatterEvent;
 
         return response;
     }
@@ -117,6 +120,41 @@ public class GameController {
 
         response.animationPath = new ArrayList<>();
         response.message = "Game has been reset.";
+
+        return response;
+    }
+    @PostMapping("/resign")
+    public GameTurnResponse resignGame(@RequestBody Map<String, Integer> request) {
+        int resigningPlayerId = request.get("playerId");
+        GameTurnResponse response = new GameTurnResponse();
+
+        response.status = "game_complete";
+        response.message = "Một người chơi đã đầu hàng.";
+        response.winner = (resigningPlayerId == 1) ? "Player 2" : "Player 1";
+
+        // Đưa state hiện tại vào response để UI không bị lỗi undefined
+        response.currentPlayer = game.currentPlayer.playerId;
+
+        response.scores = new HashMap<>();
+        response.scores.put("player1", (int) game.player1.score);
+        response.scores.put("player2", (int) game.player2.score);
+
+        response.capturedCount = new HashMap<>();
+        response.capturedCount.put("player1", game.player1.capturedCount);
+        response.capturedCount.put("player2", game.player2.capturedCount);
+
+        response.board = new HashMap<>();
+        for (int i = 0; i < 12; i++) {
+            Tile tile = game.board[i];
+            response.board.put(
+                    BoardMapper.getTileName(i),
+                    new TileDto(tile.mandarinPieces, tile.citizenPieces, tile.mult)
+            );
+        }
+
+        // Đầu hàng thì không có animation chạy quân
+        response.animationPath = new ArrayList<>();
+        response.scatterEvent = null;
 
         return response;
     }

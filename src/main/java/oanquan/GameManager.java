@@ -9,6 +9,7 @@ public class GameManager {
     public Player player2;
     public Player currentPlayer;
     public List<Integer> lastAnimationPath = new ArrayList<>();
+    public String lastScatterEvent = null;
     public GameManager(String p1Name, String p2Name) {
         player1 = new Player(p1Name, 1);
         player2 = new Player(p2Name, 2);
@@ -26,6 +27,7 @@ public class GameManager {
     }
 
     public void playTurn(int startIndex, int direction) {
+        this.lastScatterEvent = null;
         Turn currentTurn = new Turn(currentPlayer);
         currentTurn.startIndex = startIndex;
         currentTurn.direction = direction;
@@ -92,11 +94,7 @@ public class GameManager {
 
             double captured = board[targetIndex].calcScore();
             int actualPieces = board[targetIndex].mandarinPieces + board[targetIndex].citizenPieces;
-
-            // Bốc sạch quân ra khỏi ô
             board[targetIndex].pickUpPieces();
-
-            // CỘNG VÀO TÀI KHOẢN NGƯỜI CHƠI
             currentPlayer.score += captured;
             currentPlayer.capturedCount += actualPieces;
 
@@ -127,9 +125,58 @@ public class GameManager {
         boolean isMandarin1Empty = (board[5].mandarinPieces == 0 && board[5].citizenPieces == 0);
         boolean isMandarin2Empty = (board[11].mandarinPieces == 0 && board[11].citizenPieces == 0);
 
-        return isMandarin1Empty && isMandarin2Empty;
+        return (isMandarin1Empty && isMandarin2Empty) || isDeadlock();
     }
     public void switchTurn() {
         currentPlayer = (currentPlayer == player1) ? player2 : player1;
+        if (!isGameOver()) {
+            checkAndScatterPieces();
+        }
+    }
+    private void checkAndScatterPieces() {
+        int startIdx = (currentPlayer.playerId == 1) ? 0 : 6;
+        int endIdx = (currentPlayer.playerId == 1) ? 4 : 10;
+
+        boolean isEmpty = true;
+        for (int i = startIdx; i <= endIdx; i++) {
+            if (board[i].citizenPieces > 0) {
+                isEmpty = false;
+                break;
+            }
+        }
+
+        if (isEmpty) {
+            Player opponent = (currentPlayer == player1) ? player2 : player1;
+            int needed = 5;
+
+            if (currentPlayer.capturedCount >= needed) {
+                currentPlayer.capturedCount -= needed;
+                currentPlayer.score -= needed;
+                this.lastScatterEvent = "P" + currentPlayer.playerId + "_OWN";
+            }
+            else {
+                int borrowed = needed - currentPlayer.capturedCount;
+
+                currentPlayer.score -= currentPlayer.capturedCount;
+                currentPlayer.capturedCount = 0;
+
+                currentPlayer.score -= borrowed;
+                opponent.score += borrowed;
+                opponent.capturedCount -= borrowed;
+
+                this.lastScatterEvent = "P" + currentPlayer.playerId + "_BORROW";
+            }
+
+            for (int i = startIdx; i <= endIdx; i++) {
+                board[i].citizenPieces = 1;
+            }
+        }
+    }
+    public boolean isDeadlock() {
+        int totalPieces = 0;
+        for (Tile t : board) {
+            totalPieces += t.citizenPieces + t.mandarinPieces;
+        }
+        return totalPieces <= 5;
     }
 }

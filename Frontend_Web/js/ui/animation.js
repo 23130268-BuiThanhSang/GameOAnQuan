@@ -5,6 +5,7 @@
 
 const dropSound = new Audio('assets/sounds/drop.mp3'); dropSound.volume = 0.6;
 const pickupSound = new Audio('assets/sounds/pickup.mp3'); pickupSound.volume = 0.6;
+const gameOverSound = new Audio('assets/sounds/win.wav'); gameOverSound.volume = 0.7;
 
 const Animation = {
     spawnRippleVFX(targetHole) {
@@ -17,7 +18,7 @@ const Animation = {
         );
     },
 
-    animateRaiQuan(startHoleId, direction, pathArray, finalGameState, movingPlayerId) {
+    animateRaiQuan(startHoleId, direction, pathArray, finalGameState, movingPlayerId,onComplete) {
         if (!pathArray || pathArray.length === 0) {
             BoardRender.renderFullState(finalGameState);
             return;
@@ -112,9 +113,74 @@ const Animation = {
         }
 
         tl.to(hand, { opacity: 0, duration: 0.3, delay: hasCaptured ? 0.1 : 0.3 });
+        tl.set(hand, { x: -2000, y: -2000 });
+
+        if (finalGameState.status === "game_complete") {
+            tl.to({}, { duration: 0.5 });
+            tl.call(() => {
+                document.getElementById('winnerName').innerText = `${finalGameState.winner} Giành Phần Thắng!`;
+                document.getElementById('gameOverModal').style.display = 'flex';
+                gameOverSound.currentTime = 0;
+                gameOverSound.play().catch(()=>{});
+            });
+        }
+
         tl.call(() => {
-            BoardRender.renderFullState(finalGameState);
-            GameController.isAnimating = false;
+            if (onComplete) {
+                onComplete();
+            }
         });
+    },
+    animateVayQuan(playerId, isBorrowing, onComplete) {
+        const tl = gsap.timeline({ onComplete: onComplete });
+        const hand = document.getElementById("anim-hand");
+        let sourceTrayId = "";
+        if (isBorrowing) {
+            sourceTrayId = playerId === 1 ? 'tray-p2' : 'tray-p1';
+        } else {
+            sourceTrayId = playerId === 1 ? 'tray-p1' : 'tray-p2';
+        }
+
+        const trayBox = document.querySelector(`#${sourceTrayId} .captured-box`);
+        if (!trayBox) {
+            if(onComplete) onComplete();
+            return;
+        }
+
+        const trayRect = trayBox.getBoundingClientRect();
+        const startX = trayRect.left - 20;
+        const startY = trayRect.top + trayRect.height / 2 - 10;
+        tl.set(hand, { x: startX, y: startY, opacity: 0 });
+        tl.to(hand, { opacity: 1, duration: 0.3 });
+        tl.to(hand, { y: "+=15", duration: 0.15, yoyo: true, repeat: 1 });
+        tl.call(() => {
+            pickupSound.currentTime = 0;
+            pickupSound.play().catch(()=>{});
+            gsap.fromTo(trayBox, { scale: 1.2, color: '#e74c3c' }, { scale: 1, color: '', duration: 0.3 });
+        });
+
+        const targetHoles = playerId === 1 ? [0, 1, 2, 3, 4] : [6, 7, 8, 9, 10];
+        targetHoles.forEach(holeIndex => {
+            const holeId = GameController.getHoleId(holeIndex);
+            const holeDOM = document.getElementById(holeId);
+
+            if (holeDOM) {
+                const rect = holeDOM.getBoundingClientRect();
+                const posX = rect.left + rect.width / 2 - 15;
+                const posY = rect.top + rect.height / 2 - 15;
+
+                tl.to(hand, { x: posX, y: posY, duration: 0.25, ease: "power1.inOut" });
+                tl.to(hand, { y: "+=15", duration: 0.1, yoyo: true, repeat: 1 });
+                tl.call(() => {
+                    dropSound.currentTime = 0;
+                    dropSound.play().catch(()=>{});
+                    this.spawnRippleVFX(holeDOM);
+
+                    BoardRender.incrementHole(holeId);
+                });
+            }
+        });
+        tl.to(hand, { opacity: 0, duration: 0.3, delay: 0.2 });
     }
+
 };
