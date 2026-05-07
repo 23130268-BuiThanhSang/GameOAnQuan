@@ -123,6 +123,12 @@ public class GameManager {
         return true;
     }
 
+    public boolean isGameOver() {
+        boolean isMandarin1Empty = (board[5].mandarinPieces == 0 && board[5].citizenPieces == 0);
+        boolean isMandarin2Empty = (board[11].mandarinPieces == 0 && board[11].citizenPieces == 0);
+
+        return isMandarin1Empty && isMandarin2Empty;
+    }
     public void switchTurn() {
         currentPlayer = (currentPlayer == player1) ? player2 : player1;
     }
