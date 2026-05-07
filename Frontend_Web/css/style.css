@@ -278,7 +278,6 @@ body::before {
     pointer-events: none;
 }
 
-/* Các viên ngọc được ép size nhỏ nhắn, có viền sáng */
 .captured-visuals img {
     position: absolute;
     width: 25px !important;
@@ -287,4 +286,133 @@ body::before {
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
     top: 50%;
     left: 50%;
+}
+
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(43, 29, 14, 0.8);
+    display: flex; align-items: center; justify-content: center; z-index: 1000;
+}
+.modal-content.folk-style {
+    background: #fdf5e6;
+    padding: 30px; border-radius: 8px; text-align: center;
+    border: 5px double #8b4513;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    max-width: 400px;
+}
+.folk-title {
+    color: #a52a2a;
+    font-family: 'Segoe UI', serif; font-variant: small-caps;
+    border-bottom: 2px solid #deb887; padding-bottom: 10px;
+}
+.winner-box { margin: 20px 0; font-size: 1.5rem; font-weight: bold; color: #5d4037; }
+.btn-folk {
+    background: #8b4513; color: #fff; border: none; padding: 12px 25px;
+    font-weight: bold; cursor: pointer; border-radius: 4px;
+    text-transform: uppercase; transition: background 0.3s;
+}
+.btn-folk:hover { background: #5d4037; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); }
+
+.btn-resign {
+    background-color: #8b4513;
+    color: #fdf5e6;
+    border: 2px solid #5d4037;
+    border-radius: 6px;
+    padding: 6px 15px;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+    margin-top: 10px;
+}
+
+.btn-resign:hover {
+    background-color: #a52a2a;
+    transform: translateY(-2px);
+    box-shadow: 2px 4px 8px rgba(0,0,0,0.5);
+}
+
+.btn-resign:active {
+    transform: translateY(0);
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(43, 29, 14, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content.folk-style {
+    background: #fdf5e6;
+    padding: 30px 40px;
+    border-radius: 10px;
+    text-align: center;
+    border: 6px double #8b4513;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    max-width: 450px;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.folk-title {
+    color: #a52a2a; /* Đỏ gạch */
+    font-family: 'Times New Roman', serif;
+    font-size: 2rem;
+    font-variant: small-caps;
+    border-bottom: 2px dashed #deb887;
+    padding-bottom: 15px;
+    margin-top: 0;
+}
+
+.winner-box {
+    margin: 25px 0;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #5d4037;
+    text-transform: uppercase;
+}
+
+.folk-text {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 25px;
+    font-style: italic;
+}
+
+.btn-folk {
+    background: #8b4513;
+    color: #fdf5e6;
+    border: 2px solid #5d4037;
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    box-shadow: 2px 4px 6px rgba(0,0,0,0.3);
+}
+
+.btn-folk:hover {
+    background: #a52a2a;
+    transform: translateY(-2px);
+    box-shadow: 2px 6px 10px rgba(0,0,0,0.4);
+}
+
+.btn-folk:active {
+    transform: translateY(1px);
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
 }

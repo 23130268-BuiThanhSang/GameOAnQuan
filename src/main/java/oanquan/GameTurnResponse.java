@@ -13,4 +13,5 @@ public class GameTurnResponse {
     public Map<String, Integer> capturedCount;
 
     public String winner;
+    public String scatterEvent;
 }
