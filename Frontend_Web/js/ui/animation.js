@@ -118,7 +118,20 @@ const Animation = {
         if (finalGameState.status === "game_complete") {
             tl.to({}, { duration: 0.5 });
             tl.call(() => {
-                document.getElementById('winnerName').innerText = `${finalGameState.winner} Giành Phần Thắng!`;
+                let winnerDisplayName = finalGameState.winner;
+                if (winnerDisplayName === "Player 1") {
+                    winnerDisplayName = localStorage.getItem('oanquan_p1') || "Player 1";
+                } else if (winnerDisplayName === "Player 2") {
+                    winnerDisplayName = localStorage.getItem('oanquan_p2') || "Player 2";
+                } else if (winnerDisplayName === "Draw") {
+                    winnerDisplayName = "Hòa";
+                }
+
+                if (winnerDisplayName === "Hòa") {
+                    document.getElementById('winnerName').innerText = "Ván Cờ Hòa Nhau!";
+                } else {
+                    document.getElementById('winnerName').innerText = `${winnerDisplayName} Giành Phần Thắng!`;
+                }
                 document.getElementById('gameOverModal').style.display = 'flex';
                 gameOverSound.currentTime = 0;
                 gameOverSound.play().catch(()=>{});

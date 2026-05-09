@@ -82,7 +82,15 @@ const GameController = {
             if (responseData && responseData.status === "game_complete") {
                 this.isGameOver = true;
 
-                document.getElementById('winnerName').innerText = `${responseData.winner} Thắng Áp Đảo!`;
+                let winnerDisplayName = responseData.winner;
+                if (winnerDisplayName === "Player 1") {
+                    winnerDisplayName = localStorage.getItem('oanquan_p1') || "Player 1";
+                } else if (winnerDisplayName === "Player 2") {
+                    winnerDisplayName = localStorage.getItem('oanquan_p2') || "Player 2";
+                }
+
+                document.getElementById('winnerName').innerText = `${winnerDisplayName} Thắng Áp Đảo!`;
+
                 document.getElementById('gameOverModal').style.display = 'flex';
 
                 const gameOverSound = new Audio('assets/sounds/win.mp3');
