@@ -43,7 +43,7 @@ body::before {
 .menu-background {
     width: 100%;
     height: 100%;
-    background-image: url('../assets/images/menu_bg_clean.png');
+    background-image: url('../assets/images/oaqbg.png');
     /* Ép ảnh lấp đầy 100% không bị cắt viền trên dưới */
     background-size: 100% 100%;
     background-position: center;
@@ -153,8 +153,11 @@ body::before {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 30px;
+    gap: 20px;
     position: relative;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    height: 100vh;
 }
 
 .player-tray {
@@ -248,9 +251,9 @@ body::before {
     transition: transform 0.2s;
 }
 
-.quan-gem { width: 60px !important; height: 60px !important; object-fit: contain; }
+.quan-gem { width: 80px !important; height: 80px !important; object-fit: contain; }
 .stacked-view { position: relative; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
-.dan-gem { width: 30px !important; height: 30px !important; object-fit: contain; position: absolute; }
+.dan-gem { width: 60px !important; height: 60px !important; object-fit: contain; position: absolute; }
 
 .count-badge {
     position: absolute; bottom: 5px; right: 5px;

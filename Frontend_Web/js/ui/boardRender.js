@@ -21,7 +21,25 @@ const BoardRender = {
 
         // 2. Vẽ Ngọc Quan (Nếu có)
         if (mandarinCount > 0) {
-            innerHTML += `<img src="assets/images/quan_gem_token.png" class="gem-token quan-gem" style="position: absolute; top: 15%; z-index: 2;">`;
+            let quanImage = "assets/images/general1.png";
+            let quanStyle = `position: absolute; z-index: 2;
+    `;
+            // Quan trái -> góc trên trái
+            if (holeId === "quan-left") {
+                quanImage = "assets/images/general1.png";
+                quanStyle += `top: 35px;
+        `;
+            }
+
+            // Quan phải -> góc dưới phải
+            else if (holeId === "quan-right") {
+                quanImage = "assets/images/general2.png";
+                quanStyle += `bottom: 70px;
+        `;
+            }
+
+            innerHTML += `<img src="${quanImage}" class="gem-token quan-gem" style="${quanStyle}">
+    `;
         }
 
         // 3. Vẽ Ngọc Dân (Xếp chồng)
@@ -30,9 +48,17 @@ const BoardRender = {
             // Giới hạn hiển thị tối đa 6 viên để không bị tràn ô
             let renderCount = Math.min(citizenCount, 6);
             for (let i = 0; i < renderCount; i++) {
-                let offsetX = (Math.random() - 0.5) * 15; // Rải ngẫu nhiên một chút cho tự nhiên
-                let offsetY = (Math.random() - 0.5) * 15;
-                stackHTML += `<img src="assets/images/dan_gem_token.png" class="gem-token dan-gem" style="transform: translate(${offsetX}px, ${offsetY}px); z-index: 1;">`;
+                const positions = [
+                    [-22, -14],
+                    [22, -14],
+                    [-22, 14],
+                    [22, 14],
+                    [0, 0],
+                    [0, -28]
+                ];
+
+                let [offsetX, offsetY] = positions[i];
+                stackHTML += `<img src="assets/images/pawn.png" class="gem-token dan-gem" style="transform: translate(${offsetX}px, ${offsetY}px); z-index: 1;">`;
             }
             if (citizenCount > 6) {
                 stackHTML += `<span style="color: #ffd700; font-size: 14px; font-weight: bold; position: absolute; z-index: 3;">+</span>`;
@@ -125,7 +151,7 @@ const BoardRender = {
             let offsetX = (Math.random() - 0.5) * 15;
             let offsetY = (Math.random() - 0.5) * 15;
             let img = document.createElement('img');
-            img.src = 'assets/images/dan_gem_token.png';
+            img.src = 'assets/images/pawn.png';
             img.className = 'gem-token dan-gem';
             img.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
             img.style.zIndex = '1';
@@ -152,7 +178,7 @@ const BoardRender = {
             for (let i = 0; i < displayCount; i++) {
                 let offsetX = (Math.random() - 0.5) * 30 - 12; // Rải ngẫu nhiên trái phải
                 let offsetY = (Math.random() - 0.5) * 15 - 12; // Rải ngẫu nhiên lên xuống
-                visualContainer.innerHTML += `<img src="assets/images/dan_gem_token.png" style="transform: translate(${offsetX}px, ${offsetY}px); z-index: ${i}">`;
+                visualContainer.innerHTML += `<img src="assets/images/pawn.png" style="transform: translate(${offsetX}px, ${offsetY}px); z-index: ${i}">`;
             }
         }
     },
