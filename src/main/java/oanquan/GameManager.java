@@ -145,9 +145,10 @@ public class GameManager {
         halfMoveCount++;
         if (halfMoveCount % 2 == 0) fullTurnCount++;
         if (fullTurnCount > 0
-                && fullTurnCount % 3 == 0
+                && (fullTurnCount == 5 || fullTurnCount == 10 || fullTurnCount == 15)
                 && !inShop
                 && lastShopOpenedAtTurn != fullTurnCount) {
+
             lastShopOpenedAtTurn = fullTurnCount;
             openShop();
         }

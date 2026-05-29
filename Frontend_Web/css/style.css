@@ -364,3 +364,145 @@ body::before {
     0% { transform: scale(0.5); opacity: 0; }
     100% { transform: scale(1); opacity: 1; }
 }
+
+/* =========================================
+   UI CỬA HÀNG NÂNG CẤP (SHOP MODAL)
+========================================= */
+.shop-modal-content {
+    max-width: 850px !important;
+    width: 95%;
+    max-height: 90vh; /* Giới hạn chiều cao tối đa bằng 90% màn hình */
+    overflow-y: auto; /* Hiện thanh cuộn mượt mà nếu màn hình quá thấp */
+    padding: 20px 30px !important; /* Ép nhỏ padding tổng của modal lại */
+}
+
+/* Tùy chỉnh lại thanh cuộn cho Modal nhìn xịn hơn (Webkit) */
+.shop-modal-content::-webkit-scrollbar { width: 8px; }
+.shop-modal-content::-webkit-scrollbar-track { background: #fdf5e6; border-radius: 10px; }
+.shop-modal-content::-webkit-scrollbar-thumb { background: #deb887; border-radius: 10px; }
+.shop-modal-content::-webkit-scrollbar-thumb:hover { background: #8b4513; }
+
+.shop-turn-title {
+    color: #a52a2a;
+    font-family: 'Times New Roman', serif;
+    font-size: 1.5rem; /* Thu nhỏ font title xuống 1 xíu */
+    border-bottom: 2px dashed #deb887;
+    padding-bottom: 8px;
+    margin-bottom: 10px; /* Ép margin nhỏ lại (cũ 20px) */
+    margin-top: 0;
+    text-align: center;
+}
+
+.shop-player-area {
+    transition: all 0.4s ease;
+    padding: 8px 15px; /* Giảm padding khu vực của mỗi người chơi */
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* Làm mờ và khóa click khu vực chưa tới lượt */
+.inactive-area {
+    opacity: 0.35;
+    pointer-events: none;
+    filter: grayscale(60%);
+}
+
+.shop-cards-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.card-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px; /* Giảm khoảng cách giữa thẻ và nút roll */
+}
+
+.card-item {
+    width: 135px; /* Thu hẹp chiều ngang thẻ */
+    height: 195px; /* Ép lùn thẻ (cũ là 240px) */
+    background: linear-gradient(145deg, #ffffff, #fdf5e6);
+    border: 2px solid #deb887;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+    position: relative;
+}
+
+.card-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(218, 165, 32, 0.5);
+    border-color: #daa520;
+}
+
+/* Hiệu ứng chọn nhiều thẻ */
+.card-item.selected {
+    border: 3px solid #32cd32;
+    box-shadow: 0 0 15px rgba(50, 205, 50, 0.6);
+}
+
+
+.card-art-placeholder {
+    width: 100%; height: 40%; /* Giảm tỷ lệ khung ảnh xuống */
+    background: #e6d5b8;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; color: #8b4513; font-style: italic;
+    border-bottom: 2px solid #deb887;
+}
+
+.card-info {
+    padding: 6px;
+    text-align: center;
+    display: flex; flex-direction: column; height: 60%;
+}
+
+.card-name { font-weight: bold; color: #5d4037; font-size: 0.9rem; margin-bottom: 2px; }
+.card-desc { font-size: 0.7rem; color: #666; flex-grow: 1; line-height: 1.2; overflow: hidden; }
+.card-price { color: #a52a2a; font-size: 1rem; margin-top: 2px; }
+
+/* Nút Roll từng thẻ thu gọn */
+.btn-reroll {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #deb887;
+    color: #8b4513;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+}
+
+.btn-reroll:hover {
+    background: #deb887; color: #fff;
+    transform: rotate(180deg);
+}
+
+.shop-divider {
+    border: 0; height: 2px;
+    background-image: linear-gradient(to right, transparent, #8b4513, transparent);
+    margin: 10px 0; opacity: 0.6; /* Giảm mạnh margin của dải phân cách (cũ 25px) */
+}
+.turn-indicator {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.8rem;
+    color: #5d4037;
+    font-weight: bold;
+    background: #fdf5e6;
+    padding: 5px 25px;
+    border: 3px double #8b4513;
+    border-radius: 30px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    z-index: 900;
+}

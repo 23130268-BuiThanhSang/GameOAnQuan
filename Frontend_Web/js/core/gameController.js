@@ -21,7 +21,6 @@ const GameController = {
     },
 
     async handleTileClick(holeId) {
-
         if (this.isAnimating || this.isGameOver) return;
 
         const startIndex = this.getBackendIndex(holeId);
@@ -41,6 +40,32 @@ const GameController = {
         if (responseData && responseData.status === "game_complete") {
             this.isGameOver = true;
         }
+
+        // ==========================================
+        // KHỐI LOGIC CHẠY SAU KHI KẾT THÚC HOẠT ẢNH
+        // ==========================================
+        const onTurnFinished = () => {
+            BoardRender.renderFullState(responseData);
+            GameController.currentPlayerId = responseData.currentPlayer;
+            GameController.isAnimating = false; // Mở khóa bàn cờ
+
+            // 1. Cập nhật nhãn đếm lượt hiển thị trên UI
+            if (responseData.fullTurnCount !== undefined) {
+                const turnDisplay = document.getElementById('current-turn-display');
+                if (turnDisplay) {
+                    turnDisplay.innerText = responseData.fullTurnCount;
+                }
+            }
+
+            // 2. Kiểm tra cờ inShop từ Backend để bật Popup
+            if (responseData.inShop) {
+                // Đợi 0.3s cho mượt mắt rồi mới nảy Popup lên
+                setTimeout(() => {
+                    ShopController.openShop(responseData);
+                }, 300);
+            }
+        };
+
         Animation.animateRaiQuan(
             holeId,
             direction,
@@ -51,19 +76,14 @@ const GameController = {
                 if (responseData.scatterEvent) {
                     const scatterPlayerId = responseData.scatterEvent.includes("P1") ? 1 : 2;
                     const isBorrowing = responseData.scatterEvent.includes("BORROW");
-                    Animation.animateVayQuan(scatterPlayerId, isBorrowing, () => {
-                        BoardRender.renderFullState(responseData);
-                        GameController.currentPlayerId = responseData.currentPlayer;
-                        GameController.isAnimating = false;
-                    });
+                    Animation.animateVayQuan(scatterPlayerId, isBorrowing, onTurnFinished);
                 } else {
-                    BoardRender.renderFullState(responseData);
-                    GameController.currentPlayerId = responseData.currentPlayer;
-                    GameController.isAnimating = false;
+                    onTurnFinished(); // Chạy hàm xử lý kết thúc lượt
                 }
             }
         );
     },
+
     async resign(playerId) {
         if (this.isGameOver) return;
 
@@ -104,6 +124,7 @@ const GameController = {
         }
         this.isAnimating = false;
     },
+
     async resetGame() {
         try {
             const responseData = await ApiClient.sendReset();
@@ -116,7 +137,13 @@ const GameController = {
                 this.isGameOver = false;
                 this.isAnimating = false;
 
-                // 3. Render lại bàn cờ mới tinh
+                // 3. Reset lại nhãn đếm lượt về 0
+                if (responseData.fullTurnCount !== undefined) {
+                    const turnDisplay = document.getElementById('current-turn-display');
+                    if (turnDisplay) turnDisplay.innerText = responseData.fullTurnCount;
+                }
+
+                // 4. Render lại bàn cờ mới tinh
                 BoardRender.renderFullState(responseData);
                 this.currentPlayerId = responseData.currentPlayer;
             }
