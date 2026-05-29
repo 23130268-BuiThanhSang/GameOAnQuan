@@ -20,7 +20,6 @@
                 <input type="text" id="p1NameInput" placeholder="Tên Player 1" class="folk-input" maxlength="15">
                 <input type="text" id="p2NameInput" placeholder="Tên Player 2" class="folk-input" maxlength="15">
             </div>
-
             <button class="menu-btn" onclick="MenuController.startGame()">CHƠI NGAY</button>
             <button class="menu-btn" onclick="MenuController.showRules()">LUẬT CHƠI</button>
             <button id="btnToggleAudio" class="menu-btn" onclick="MenuController.toggleAudio()">ÂM THANH: BẬT</button>
@@ -41,8 +40,11 @@
     </div>
 </div>
 
-
 <div id="game-screen" class="screen-container" style="display: none; opacity: 0;">
+
+    <div class="turn-indicator">
+        Lượt: <span id="current-turn-display">0</span>/20
+    </div>
 
     <div class="game-controls">
         <button class="btn-control" onclick="MenuController.backToMenu()" title="Về Menu Chính">
@@ -90,7 +92,38 @@
 
 </div>
 
-<div id="gameOverModal" class="modal-overlay" style="display: none; z-index: 2500;">
+<div id="shopModal" class="modal-overlay" style="display: none; z-index: 2500;">
+    <div class="modal-content folk-style" style="max-width: 600px; width: 95%;">
+        <h2 class="folk-title" style="font-size: 1.5rem; margin-bottom: 10px;">Cửa Hàng Kỹ Năng</h2>
+
+        <div id="shop-area-p2">
+            <h3 style="color: #5d4037; font-size: 1rem; margin: 5px 0;">Player 2 - Điểm: <span id="shop-score-p2">0</span></h3>
+            <div class="shop-area">
+                <div class="card-item"><div class="card-art-placeholder">Visual Card P2</div><p>Thẻ 1</p><b>3 Đ</b></div>
+                <div class="card-item"><div class="card-art-placeholder">Visual Card P2</div><p>Thẻ 2</p><b>4 Đ</b></div>
+                <div class="card-item"><div class="card-art-placeholder">Visual Card P2</div><p>Thẻ 3</p><b>5 Đ</b></div>
+            </div>
+        </div>
+
+        <hr class="shop-divider">
+
+        <div id="shop-area-p1">
+            <h3 style="color: #5d4037; font-size: 1rem; margin: 5px 0;">Player 1 - Điểm: <span id="shop-score-p1">0</span></h3>
+            <div class="shop-area">
+                <div class="card-item"><div class="card-art-placeholder">Visual Card P1</div><p>Thẻ 1</p><b>3 Đ</b></div>
+                <div class="card-item"><div class="card-art-placeholder">Visual Card P1</div><p>Thẻ 2</p><b>4 Đ</b></div>
+                <div class="card-item"><div class="card-art-placeholder">Visual Card P1</div><p>Thẻ 3</p><b>5 Đ</b></div>
+            </div>
+        </div>
+
+        <div style="margin-top: 15px; display: flex; justify-content: space-around;">
+            <button class="btn-folk" style="padding: 8px 15px; font-size: 0.9rem;" onclick="ShopController.reroll()">🎲 Đổi Thẻ (1 Free)</button>
+            <button class="btn-folk" style="padding: 8px 15px; font-size: 0.9rem;" onclick="ShopController.confirmSelection()">Chốt Lựa Chọn</button>
+        </div>
+    </div>
+</div>
+
+<div id="gameOverModal" class="modal-overlay" style="display: none; z-index: 2600;">
     <div class="modal-content folk-style">
         <h2 class="folk-title">Kết Thúc Ván Đấu</h2>
         <div class="winner-box">
