@@ -186,7 +186,7 @@ body::before {
     text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
 }
 
-.avatar-box, .card-slot {
+.avatar-box {
     border: 1px dashed #bda061;
     color: #bda061;
     padding: 12px 25px;
@@ -505,4 +505,142 @@ body::before {
     border-radius: 30px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     z-index: 900;
+}
+/* =========================================
+   UI KHAY KỸ NĂNG (SKILL TRAY) - PHIÊN BẢN MỚI
+========================================= */
+.skill-tray {
+    display: flex;
+    align-items: center;
+    min-width: 140px;
+    height: 75px;
+    border: 2px solid #bda061;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 5px;
+    position: relative;
+}
+
+.empty-tray-text {
+    color: #bda061;
+    font-size: 0.9rem;
+    margin: auto;
+}
+
+/* Thẻ thu nhỏ nằm trong khay - PHIÊN BẢN MỚI */
+.mini-card {
+    width: 45px; /* Tăng chiều rộng thẻ */
+    height: 65px; /* Tăng chiều cao thẻ */
+    border-radius: 6px; /* Bo góc mượt hơn */
+    border: 2px solid #deb887; /* Viền vàng đồng vững chắc */
+    background-color: #e6d5b8;
+    background-size: cover;
+    background-position: top;
+    position: relative;
+    cursor: help; /* Con trỏ chuột hình dấu hỏi */
+    transition: transform 0.3s ease, z-index 0s;
+    box-shadow: -3px 3px 6px rgba(0,0,0,0.7); /* Đổ bóng sâu hơn */
+}
+
+/* Kỹ thuật xếp chồng: Thẻ sau sẽ đè lên thẻ trước 20px */
+.mini-card:not(:first-child) {
+    margin-left: -20px; /* Điều chỉnh khoảng xếp chồng */
+}
+
+/* Hiệu ứng khi hover: Rút thẻ trồi lên và đẩy z-index lên cao nhất */
+.mini-card:hover {
+    transform: translateY(-20px) scale(1.2); /* Trồi lên cao hơn và lớn hơn */
+    z-index: 50 !important;
+    border-color: #ffd700;
+}
+
+/* Khung Tooltip thông tin thẻ - PHIÊN BẢN MỚI */
+.mini-card-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 120%; /* Nổi lên phía trên thẻ */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 160px;
+    background: rgba(43, 29, 14, 0.95);
+    color: #fdf5e6;
+    text-align: center;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #deb887;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    pointer-events: none; /* Tránh giật lag */
+    transition: opacity 0.2s ease, bottom 0.2s ease;
+    z-index: 100;
+}
+
+.mini-card-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%; left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(43, 29, 14, 0.95) transparent transparent transparent;
+}
+
+.mini-card:hover .mini-card-tooltip {
+    visibility: visible;
+    opacity: 1;
+    bottom: 130%; /* Trồi lên cao hơn */
+}
+
+.tooltip-title {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+    border-bottom: 1px dashed #8b4513;
+    padding-bottom: 4px;
+}
+
+.tooltip-desc {
+    font-size: 0.75rem;
+    line-height: 1.3;
+    color: #ccc;
+}
+
+/* Nút Nhận thua - Nâng cấp visual */
+.btn-resign {
+    background-color: #8b4513;
+    color: #fdf5e6;
+    border: 2px solid #5d4037;
+    border-radius: 6px;
+    padding: 6px 15px;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+}
+
+.btn-resign:hover {
+    background-color: #a52a2a;
+    transform: translateY(-2px);
+    box-shadow: 2px 4px 8px rgba(0,0,0,0.5);
+}
+
+#skill-tray-p2 .mini-card-tooltip {
+    bottom: auto;
+    top: 120% !important;
+
+    transition: opacity 0.2s ease, top 0.2s ease !important;
+}
+
+#skill-tray-p2 .mini-card:hover .mini-card-tooltip {
+    bottom: auto;
+    top: 130% !important;
+}
+
+#skill-tray-p2 .mini-card-tooltip::after {
+    top: auto;
+    bottom: 100% !important;
+    border-color: transparent transparent rgba(43, 29, 14, 0.95) transparent !important;
 }
