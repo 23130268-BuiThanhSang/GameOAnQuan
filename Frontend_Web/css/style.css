@@ -186,7 +186,7 @@ body::before {
     text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
 }
 
-.avatar-box, .card-slot {
+.avatar-box {
     border: 1px dashed #bda061;
     color: #bda061;
     padding: 12px 25px;
@@ -505,4 +505,104 @@ body::before {
     border-radius: 30px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     z-index: 900;
+}
+/* =========================================
+   UI KHAY KỸ NĂNG (SKILL TRAY)
+========================================= */
+.skill-tray {
+    display: flex;
+    align-items: center;
+    min-width: 140px;
+    height: 65px;
+    border: 1px dashed #bda061;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 5px 10px;
+    position: relative;
+}
+
+.empty-tray-text {
+    color: #bda061;
+    font-size: 0.9rem;
+    margin: auto;
+}
+
+/* Thẻ thu nhỏ nằm trong khay */
+.mini-card {
+    width: 40px;
+    height: 55px;
+    border-radius: 4px;
+    border: 2px solid #deb887;
+    background-color: #e6d5b8;
+    background-size: cover;
+    background-position: top;
+    position: relative;
+    cursor: help; /* Con trỏ chuột hình dấu hỏi để báo hiệu có tooltip */
+    transition: transform 0.3s ease, z-index 0s;
+    box-shadow: -2px 2px 4px rgba(0,0,0,0.6);
+}
+
+/* Kỹ thuật xếp chồng: Thẻ sau sẽ đè lên thẻ trước 20px */
+.mini-card:not(:first-child) {
+    margin-left: -20px;
+}
+
+/* Hiệu ứng khi hover: Rút thẻ trồi lên và đẩy z-index lên cao nhất */
+.mini-card:hover {
+    transform: translateY(-15px) scale(1.15);
+    z-index: 50 !important;
+    border-color: #ffd700;
+}
+
+/* Khung Tooltip thông tin thẻ */
+.mini-card-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 120%; /* Nổi lên phía trên thẻ */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 160px;
+    background: rgba(43, 29, 14, 0.95);
+    color: #fdf5e6;
+    text-align: center;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #deb887;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    pointer-events: none; /* Tránh giật lag khi chuột lướt trúng tooltip */
+    transition: opacity 0.2s ease, bottom 0.2s ease;
+    z-index: 100;
+}
+
+/* Mũi tên nhỏ chĩa xuống của Tooltip */
+.mini-card-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%; left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(43, 29, 14, 0.95) transparent transparent transparent;
+}
+
+.mini-card:hover .mini-card-tooltip {
+    visibility: visible;
+    opacity: 1;
+    bottom: 130%; /* Trồi lên một xíu cho mượt */
+}
+
+.tooltip-title {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+    border-bottom: 1px dashed #8b4513;
+    padding-bottom: 4px;
+}
+
+.tooltip-desc {
+    font-size: 0.75rem;
+    line-height: 1.3;
+    color: #ccc;
 }

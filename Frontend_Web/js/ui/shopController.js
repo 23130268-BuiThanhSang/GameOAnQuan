@@ -32,7 +32,7 @@ const ShopController = {
                 container.innerHTML += `
                     <div class="card-wrapper">
                         <div class="card-item" onclick="ShopController.toggleCard(this, ${playerId}, '${card.id}', ${card.cost})">
-                           <img src="assets/images/skills/${card.id}.png" alt="${card.name}" style="width: 100%; height: 40%; object-fit: cover; border-bottom: 2px solid #deb887; object-position: top;">
+                            <img src="assets/images/skills/${card.id}.png" alt="${card.name}" style="width: 100%; height: 40%; object-fit: cover; border-bottom: 2px solid #deb887; object-position: top;">
                             <div class="card-info">
                                 <p class="card-name">${card.name}</p>
                                 <p class="card-desc">${card.description}</p>
@@ -116,7 +116,6 @@ const ShopController = {
         } catch (error) {
             console.error("Lỗi kết nối Backend lúc chốt thẻ:", error);
         }
-
         if (this.currentShopTurn === 1) {
             this.currentShopTurn = 2;
             this.updateTurnUI();
