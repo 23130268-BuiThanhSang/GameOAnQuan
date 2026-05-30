@@ -8,18 +8,24 @@ const ShopController = {
     selectedCardsP1: [],
     selectedCardsP2: [],
 
+    shopDataP1: [],
+    shopDataP2: [],
+
     openShop: function(data) {
         this.currentShopTurn = 1;
         this.selectedCardsP1 = [];
         this.selectedCardsP2 = [];
+
+        this.shopDataP1 = data.p1ShopOptions || [];
+        this.shopDataP2 = data.p2ShopOptions || [];
 
         document.getElementById('shopModal').style.display = 'flex';
 
         document.getElementById('shop-score-p1').innerText = data.scores.player1;
         document.getElementById('shop-score-p2').innerText = data.scores.player2;
 
-        this.renderCards(1, data.p1ShopOptions);
-        this.renderCards(2, data.p2ShopOptions);
+        this.renderCards(1, this.shopDataP1);
+        this.renderCards(2, this.shopDataP2);
 
         this.updateTurnUI();
     },
@@ -124,5 +130,65 @@ const ShopController = {
             console.log("Cả hai đã chọn xong, game tiếp tục!");
             GameController.isAnimating = false;
         }
+    },
+    addCardToTray: function(playerId, cardId) {
+        const tray = document.getElementById(`skill-tray-p${playerId}`);
+        const shopData = (playerId === 1) ? this.shopDataP1 : this.shopDataP2;
+
+        const cardInfo = shopData.find(c => c.id === cardId);
+        if (!cardInfo) return;
+
+        const emptyText = tray.querySelector('.empty-tray-text');
+        if (emptyText) emptyText.remove();
+
+        const miniCard = document.createElement('div');
+        miniCard.className = 'mini-card';
+        miniCard.style.backgroundImage = `url('assets/images/skills/${cardInfo.id}.png')`;
+
+        miniCard.innerHTML = `
+            <div class="mini-card-tooltip">
+                <div class="tooltip-title">${cardInfo.name}</div>
+                <div class="tooltip-desc">${cardInfo.description}</div>
+            </div>
+        `;
+
+        tray.appendChild(miniCard);
+    },
+
+    confirmSelection: async function() {
+        const playerId = this.currentShopTurn;
+        const selectedList = (playerId === 1) ? this.selectedCardsP1 : this.selectedCardsP2;
+
+        try {
+            if (selectedList.length === 0) {
+                await fetch('http://localhost:8080/api/game/shop/skip', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ playerId: playerId })
+                });
+            } else {
+                for (let cId of selectedList) {
+                    await fetch('http://localhost:8080/api/game/shop/buy', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ playerId: playerId, cardId: cId })
+                    });
+
+                    this.addCardToTray(playerId, cId);
+                }
+            }
+        } catch (error) {
+            console.error("Lỗi kết nối Backend lúc chốt thẻ:", error);
+        }
+
+        if (this.currentShopTurn === 1) {
+            this.currentShopTurn = 2;
+            this.updateTurnUI();
+        } else {
+            document.getElementById('shopModal').style.display = 'none';
+            console.log("Cả hai đã chọn xong, game tiếp tục!");
+            GameController.isAnimating = false;
+        }
     }
+
 };

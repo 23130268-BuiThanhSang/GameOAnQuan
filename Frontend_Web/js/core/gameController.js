@@ -130,20 +130,30 @@ const GameController = {
             const responseData = await ApiClient.sendReset();
 
             if (responseData && responseData.status === "success") {
-                // 1. Ẩn Popup đi
                 document.getElementById('gameOverModal').style.display = 'none';
 
-                // 2. Mở khóa trạng thái game
                 this.isGameOver = false;
                 this.isAnimating = false;
 
-                // 3. Reset lại nhãn đếm lượt về 0
                 if (responseData.fullTurnCount !== undefined) {
                     const turnDisplay = document.getElementById('current-turn-display');
                     if (turnDisplay) turnDisplay.innerText = responseData.fullTurnCount;
                 }
 
-                // 4. Render lại bàn cờ mới tinh
+                const tray1 = document.getElementById('skill-tray-p1');
+                const tray2 = document.getElementById('skill-tray-p2');
+
+                const emptyTrayHTML = `<span class="empty-tray-text">Kỹ năng (Trống)</span>`;
+                if (tray1) tray1.innerHTML = emptyTrayHTML;
+                if (tray2) tray2.innerHTML = emptyTrayHTML;
+
+                if (typeof ShopController !== 'undefined') {
+                    ShopController.shopDataP1 = [];
+                    ShopController.shopDataP2 = [];
+                    ShopController.selectedCardsP1 = [];
+                    ShopController.selectedCardsP2 = [];
+                }
+
                 BoardRender.renderFullState(responseData);
                 this.currentPlayerId = responseData.currentPlayer;
             }
