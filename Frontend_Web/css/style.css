@@ -644,3 +644,45 @@ body::before {
     bottom: 100% !important;
     border-color: transparent transparent rgba(43, 29, 14, 0.95) transparent !important;
 }
+
+/* =========================================
+   UI CHỌN HƯỚNG RẢI QUÂN (FLOATING ARROWS)
+========================================= */
+.direction-selector {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 20px; /* Khoảng cách giữa 2 mũi tên */
+    z-index: 100;
+    /* Hiệu ứng nảy popup nhẹ nhàng */
+    animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.arrow-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(139, 69, 19, 0.95); /* Màu nâu gỗ dân gian */
+    border: 2px solid #deb887;
+    color: #fdf5e6;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+}
+
+.arrow-btn:hover {
+    background: #a52a2a;
+    transform: scale(1.15);
+    border-color: #ffd700;
+}
+
+@keyframes popIn {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}

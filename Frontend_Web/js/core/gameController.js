@@ -7,6 +7,7 @@ const GameController = {
     isAnimating: false,
     isGameOver: false,
     currentPlayerId: 1,
+    selectedHoleId: null,
 
     getBackendIndex(holeId) {
         if (holeId === "quan-right") return 5;
@@ -22,12 +23,59 @@ const GameController = {
 
     async handleTileClick(holeId) {
         if (this.isAnimating || this.isGameOver) return;
+        if (holeId === "quan-right" || holeId === "quan-left") return;
+        this.removeDirectionSelector();
+        this.selectedHoleId = holeId;
+        this.showDirectionSelector(holeId);
+    },
+
+    showDirectionSelector(holeId) {
+        const holeElement = document.getElementById(holeId);
+        if (!holeElement) return;
+
+        const index = this.getBackendIndex(holeId);
+        let leftDir = -1;
+        let rightDir = 1;
+
+        if (index >= 6 && index <= 10) {
+            leftDir = 1;
+            rightDir = -1;
+        }
+
+        const selectorUI = document.createElement('div');
+        selectorUI.className = 'direction-selector';
+        selectorUI.id = 'current-direction-selector';
+
+        selectorUI.innerHTML = `
+            <button class="arrow-btn" onclick="GameController.confirmMove(${leftDir}, event)" title="Rải sang trái">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <button class="arrow-btn" onclick="GameController.confirmMove(${rightDir}, event)" title="Rải sang phải">
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        `;
+
+        holeElement.appendChild(selectorUI);
+    },
+
+    removeDirectionSelector() {
+        const existingSelector = document.getElementById('current-direction-selector');
+        if (existingSelector) {
+            existingSelector.remove();
+        }
+        this.selectedHoleId = null;
+    },
+
+    async confirmMove(direction, event) {
+        if (event) event.stopPropagation();
+
+        const holeId = this.selectedHoleId;
+        if (!holeId) return;
+        this.removeDirectionSelector();
 
         const startIndex = this.getBackendIndex(holeId);
-        const isClockwise = window.confirm("Bạn muốn rải cùng chiều kim đồng hồ?\n[OK]: Cùng chiều\n[Cancel]: Ngược chiều");
-        const direction = isClockwise ? 1 : -1;
-
         this.isAnimating = true;
+
         const responseData = await ApiClient.sendMove(startIndex, direction);
 
         if (!responseData || responseData.status === "error") {
@@ -40,16 +88,11 @@ const GameController = {
         if (responseData && responseData.status === "game_complete") {
             this.isGameOver = true;
         }
-
-        // ==========================================
-        // KHỐI LOGIC CHẠY SAU KHI KẾT THÚC HOẠT ẢNH
-        // ==========================================
         const onTurnFinished = () => {
             BoardRender.renderFullState(responseData);
             GameController.currentPlayerId = responseData.currentPlayer;
             GameController.isAnimating = false; // Mở khóa bàn cờ
 
-            // 1. Cập nhật nhãn đếm lượt hiển thị trên UI
             if (responseData.fullTurnCount !== undefined) {
                 const turnDisplay = document.getElementById('current-turn-display');
                 if (turnDisplay) {
@@ -57,9 +100,7 @@ const GameController = {
                 }
             }
 
-            // 2. Kiểm tra cờ inShop từ Backend để bật Popup
             if (responseData.inShop) {
-                // Đợi 0.3s cho mượt mắt rồi mới nảy Popup lên
                 setTimeout(() => {
                     ShopController.openShop(responseData);
                 }, 300);
@@ -78,7 +119,7 @@ const GameController = {
                     const isBorrowing = responseData.scatterEvent.includes("BORROW");
                     Animation.animateVayQuan(scatterPlayerId, isBorrowing, onTurnFinished);
                 } else {
-                    onTurnFinished(); // Chạy hàm xử lý kết thúc lượt
+                    onTurnFinished();
                 }
             }
         );
