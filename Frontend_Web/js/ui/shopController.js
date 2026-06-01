@@ -152,6 +152,14 @@ const ShopController = {
             </div>
         `;
 
+        miniCard.onclick = () => {
+            if (GameController.currentPlayerId !== playerId) {
+                alert("Chưa tới lượt, không được xài ké thẻ của người khác!");
+                return;
+            }
+            SkillController.activateSkill(miniCard, cardInfo.id, "Nhân phẩm bùng nổ!!!");
+        };
+
         tray.appendChild(miniCard);
     },
 

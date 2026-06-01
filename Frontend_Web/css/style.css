@@ -686,3 +686,74 @@ body::before {
     0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
     100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
+/* =========================================
+   UI KÍCH HOẠT KỸ NĂNG (ULTIMATE SKILL)
+========================================= */
+.skill-activation-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px); /* Hiệu ứng làm mờ nền */
+    z-index: 5000; /* Nổi lên trên cùng */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden; /* Mặc định ẩn */
+    opacity: 0;
+}
+
+.skill-slogan {
+    font-family: 'Dancing Script', serif;
+    font-size: 4rem;
+    color: #ffd700;
+    text-shadow: 2px 2px 0 #8b4513, -1px -1px 0 #8b4513, 0 0 20px #ff8c00;
+    margin-top: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+/* Khung chứa thẻ ảo khi bay */
+.flying-card-container {
+    perspective: 1000px; /* Tạo không gian 3D để lật thẻ */
+}
+
+.flying-card {
+    width: 135px;
+    height: 195px;
+    border-radius: 8px;
+    border: 3px solid #ffd700;
+    background-size: cover;
+    background-position: top;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+}
+/* =========================================
+   HIỆU ỨNG CHỌN MỤC TIÊU BÀN CỜ
+========================================= */
+.targetable-hole {
+    animation: squareGlow 1.5s infinite;
+    cursor: crosshair !important; /* Đổi con trỏ chuột thành hình ngắm bắn */
+}
+
+@keyframes squareGlow {
+    0% {
+        /* inset giúp viền sáng bo sát vào bên trong mép của ô cờ */
+        box-shadow: inset 0 0 0 2px #32cd32;
+        background-color: rgba(50, 205, 50, 0.05);
+    }
+    50% {
+        box-shadow: inset 0 0 0 4px #32cd32, inset 0 0 20px #32cd32;
+        background-color: rgba(50, 205, 50, 0.25);
+    }
+    100% {
+        box-shadow: inset 0 0 0 2px #32cd32;
+        background-color: rgba(50, 205, 50, 0.05);
+    }
+
+}
+#tray-p1,
+#tray-p2,
+.player-tray {
+    position: relative !important;
+    z-index: 2000 !important;
+}
