@@ -23,12 +23,16 @@ const GameController = {
     },
 
     async handleTileClick(holeId) {
-        if (this.isAnimating || this.isGameOver) return;
         if (this.pendingSkillId !== null) {
-            SkillController.handleSkillTargeting(holeId, this.pendingSkillId);
+            if (typeof SkillController !== 'undefined') {
+                SkillController.handleSkillTargeting(holeId, this.pendingSkillId);
+            }
             return;
         }
+
+        if (this.isAnimating || this.isGameOver) return;
         if (holeId === "quan-right" || holeId === "quan-left") return;
+
         this.removeDirectionSelector();
         this.selectedHoleId = holeId;
         this.showDirectionSelector(holeId);
@@ -199,7 +203,10 @@ const GameController = {
                     ShopController.selectedCardsP1 = [];
                     ShopController.selectedCardsP2 = [];
                 }
-
+                this.pendingSkillId = null;
+                if (typeof SkillController !== 'undefined') {
+                    SkillController.clearHighlights();
+                }
                 BoardRender.renderFullState(responseData);
                 this.currentPlayerId = responseData.currentPlayer;
             }
