@@ -16,17 +16,9 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-color: #e6d5b8;
-
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    width: 100vw;
-    overflow: hidden;
     color: white;
     font-family: 'Times New Roman', Times, serif;
-    gap: 30px;
+    overflow: hidden;
 }
 
 body::before {
@@ -36,14 +28,149 @@ body::before {
     background-color: rgba(0, 0, 0, 0.1);
     z-index: -1;
 }
+
+/* =========================================
+   UI MÀN HÌNH MENU CHÍNH (UC1)
+========================================= */
+
+.screen-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    transition: opacity 0.8s ease-in-out;
+}
+
+.menu-background {
+    width: 100%;
+    height: 100%;
+    background-image: url('../assets/images/oaqbg.png');
+    /* Ép ảnh lấp đầy 100% không bị cắt viền trên dưới */
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-button-center {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 320px;
+    margin-top: 140px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.menu-btn {
+    background: linear-gradient(to bottom, #d4a373, #8b4513);
+    border: 2px solid #5d4037;
+    border-radius: 25px;
+    color: #fff;
+    padding: 12px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 0 #3e2723;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+
+.menu-btn:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+.menu-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #3e2723;
+}
+
+.folk-input {
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid #8b4513;
+    border-radius: 15px;
+    padding: 12px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #5d4037;
+    outline: none;
+    font-family: inherit;
+    width: 100%;
+}
+
+.folk-input:focus {
+    border-color: #a52a2a;
+    box-shadow: 0 0 8px rgba(165,42,42,0.6);
+}
+
+/* =========================================
+   UI TRẬN ĐẤU IN-GAME (UC2 - UC5)
+========================================= */
+
+/* Cụm nút điều khiển bên ngoài góc trái */
+.game-controls {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 15px;
+    z-index: 100;
+}
+
+.btn-control {
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: #8b4513;
+    color: white;
+    font-size: 1.5rem;
+    border: 2px solid #bda061;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-control:hover {
+    background: #a52a2a;
+    transform: scale(1.1);
+}
+
+/* Thiết lập khung Game-screen chứa bàn cờ */
+#game-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    height: 100vh;
+}
+
 .player-tray {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 30px;
-    width: 85vw;
+    gap: 20px;
+    /* Đã thu nhỏ để không chạm sát lề và nút bấm */
+    width: 75vw;
+    max-width: 900px;
     padding: 10px 30px;
-    min-height: 120px;
+    min-height: 100px;
+    margin: 0 auto;
 
     background: rgba(60, 35, 20, 0.85);
     border: 2px solid #bda061;
@@ -59,16 +186,18 @@ body::before {
     text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
 }
 
-.avatar-box, .card-slot {
+.avatar-box {
     border: 1px dashed #bda061;
     color: #bda061;
     padding: 12px 25px;
     border-radius: 8px;
     background: rgba(0, 0, 0, 0.3);
 }
+
 .board {
     position: relative;
     width: 85vw;
+    max-width: 1000px;
     aspect-ratio: 3 / 1;
     max-height: 60vh;
     margin: 0 auto;
@@ -89,11 +218,8 @@ body::before {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-
     border: 1px solid rgba(139, 69, 19, 0.3);
-
     box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
-
     transition: background-color 0.2s ease;
 }
 
@@ -101,18 +227,11 @@ body::before {
     background-color: rgba(255, 255, 255, 0.25);
 }
 
-.quan-zone {
-    width: 15%;
-    height: 100%;
-    top: 0;
-}
+.quan-zone { width: 15%; height: 100%; top: 0; }
 .quan-zone#quan-left { left: 0; border-right: 2px solid rgba(139, 69, 19, 0.6); }
 .quan-zone#quan-right { right: 0; border-left: 2px solid rgba(139, 69, 19, 0.6); }
 
-.dan-zone {
-    width: 14%;
-    height: 50%;
-}
+.dan-zone { width: 14%; height: 50%; }
 
 #dan-6 { top: 0; left: 71%; }
 #dan-7 { top: 0; left: 57%; }
@@ -126,165 +245,515 @@ body::before {
 #dan-3 { top: 50%; left: 57%; }
 #dan-4 { top: 50%; left: 71%; }
 
-/* ==========================================
-   4. UI CHUẨN CHO QUÂN CỜ & HIỂN THỊ TÓM TẮT
-   ========================================== */
-
-/* Viền hào quang vàng đồng cho tất cả các viên ngọc */
+/* Ngọc và Badge */
 .gem-token {
     filter: drop-shadow(0 0 5px rgba(189, 160, 97, 0.8)) drop-shadow(0 0 2px #ffd700);
     transition: transform 0.2s;
 }
 
-/* Quân Quan: Ép cứng kích thước nhỏ gọn */
-.quan-gem {
-    width: 60px !important;
-    height: 60px !important;
-    object-fit: contain;
-}
+.quan-gem { width: 80px !important; height: 80px !important; object-fit: contain; }
+.stacked-view { position: relative; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
+.dan-gem { width: 60px !important; height: 60px !important; object-fit: contain; position: absolute; }
 
-/* Container cho quân dân (Xếp chồng) */
-.stacked-view {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-}
-
-/* Quân Dân: Ép cứng kích thước nhỏ gọn */
-.dan-gem {
-    width: 30px !important;
-    height: 30px !important;
-    object-fit: contain;
-    position: absolute;
-}
-
-/* Badge đếm số ở góc dưới cùng bên phải */
 .count-badge {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
+    position: absolute; bottom: 5px; right: 5px;
     background: linear-gradient(135deg, #bda061, #8f6d4d);
-    color: #3c2319;
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-weight: bold;
-    font-size: 1.2rem;
-    border: 1px solid #ffd700;
+    color: #3c2319; padding: 3px 10px; border-radius: 12px;
+    font-weight: bold; font-size: 1.2rem; border: 1px solid #ffd700;
     box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
-    z-index: 10;
-    pointer-events: none; /* [QUAN TRỌNG] Click xuyên qua được */
+    z-index: 10; pointer-events: none;
 }
 
-/* Chỉ số nhân (Mult-badge) ở góc trên cùng bên trái */
 .mult-badge {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    background-color: #8b0000; /* Nền đỏ đô quyền lực */
-    color: #ffffff;
-    font-weight: bold;
-    font-size: 0.9rem;
-    padding: 2px 6px;
-    border-radius: 4px;
-    border: 1px solid #ffd700;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    z-index: 10;
-    pointer-events: none;
+    position: absolute; top: 5px; left: 5px;
+    background-color: #8b0000; color: #ffffff;
+    font-weight: bold; font-size: 0.9rem; padding: 2px 6px;
+    border-radius: 4px; border: 1px solid #ffd700;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 10; pointer-events: none;
 }
 
-/* ==========================================
-   5. HIỆU ỨNG VFX RẢI QUÂN (RIPPLE VFX)
-   ========================================== */
+/* Hiệu ứng */
 .ripple-effect {
-    position: absolute;
-    width: 20px;
-    height: 20px;
+    position: absolute; width: 20px; height: 20px;
     border: 3px solid rgba(255, 215, 0, 0.9);
     background: radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, rgba(255, 215, 0, 0) 60%);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 20;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(1);
+    border-radius: 50%; pointer-events: none; z-index: 20;
+    top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1);
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), inset 0 0 10px rgba(255, 215, 0, 0.5);
     mix-blend-mode: screen;
 }
-#anim-hand {
-    width: 40px !important;
-    height: auto !important;
-    transform-origin: top left;
+
+#anim-hand { width: 40px !important; height: auto !important; transform-origin: top left; }
+#quan-right .count-badge, #quan-left .count-badge {
+    bottom: auto !important; right: auto !important;
+    left: 50% !important; top: 75% !important; transform: translateX(-50%) !important;
 }
-#quan-right .count-badge,
-#quan-left .count-badge {
-    bottom: auto !important;
-    right: auto !important;
-    left: 50% !important;
-    top: 75% !important;
-    transform: translateX(-50%) !important;
-}
+
 .player-tray.active-turn {
     border-color: #00ff00;
     box-shadow: 0 0 20px rgba(0, 255, 0, 0.5), inset 0 0 10px rgba(0, 255, 0, 0.2);
     transform: scale(1.02);
 }
 
-
 .player-tray.active-turn .avatar-box {
-    background: rgba(0, 255, 0, 0.2);
-    border-color: #00ff00;
-    color: #fff;
-    text-shadow: 0 0 5px #00ff00;
+    background: rgba(0, 255, 0, 0.2); border-color: #00ff00;
+    color: #fff; text-shadow: 0 0 5px #00ff00;
 }
 
-/* Kho chứa quân thực tế ăn được */
 .captured-box {
-    border: 1px solid #40e0d0;
-    background: rgba(64, 224, 208, 0.15);
-    color: #40e0d0;
-    padding: 8px 15px;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 1.1rem;
-    min-width: 100px;
+    border: 1px solid #40e0d0; background: rgba(64, 224, 208, 0.15);
+    color: #40e0d0; padding: 8px 15px; border-radius: 8px;
+    font-weight: bold; font-size: 1.1rem; min-width: 100px;
+    text-align: center; box-shadow: inset 0 0 5px rgba(64, 224, 208, 0.3);
+}
+
+.active-turn .captured-box { box-shadow: 0 0 10px rgba(64, 224, 208, 0.5); border-color: #7fffd4; color: #7fffd4; }
+.captured-wrapper { display: flex; align-items: center; justify-content: center; gap: 15px; }
+
+.captured-visuals {
+    position: relative; width: 50px; height: 40px;
+    min-width: 50px; min-height: 40px; pointer-events: none;
+}
+.captured-visuals img {
+    position: absolute; width: 25px !important; height: 25px !important;
+    object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
+    top: 50%; left: 50%;
+}
+
+/* UI Modal & Nút Nhận thua */
+.btn-resign {
+    background-color: #8b4513; color: #fdf5e6; border: 2px solid #5d4037;
+    border-radius: 6px; padding: 6px 15px; font-family: inherit;
+    font-weight: bold; font-size: 0.9rem; cursor: pointer;
+    transition: all 0.2s ease; box-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+}
+.btn-resign:hover { background-color: #a52a2a; transform: translateY(-2px); box-shadow: 2px 4px 8px rgba(0,0,0,0.5); }
+.btn-resign:active { transform: translateY(0); box-shadow: 1px 1px 3px rgba(0,0,0,0.4); }
+
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(43, 29, 14, 0.85);
+    display: flex; align-items: center; justify-content: center; z-index: 1000;
+}
+
+.modal-content.folk-style {
+    background: #fdf5e6; padding: 30px 40px; border-radius: 10px;
+    text-align: center; border: 6px double #8b4513;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6); max-width: 450px;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.folk-title {
+    color: #a52a2a; font-family: 'Times New Roman', serif;
+    font-size: 2rem; font-variant: small-caps;
+    border-bottom: 2px dashed #deb887; padding-bottom: 15px; margin-top: 0;
+}
+.winner-box { margin: 25px 0; font-size: 1.8rem; font-weight: bold; color: #5d4037; text-transform: uppercase; }
+.folk-text { font-size: 1.1rem; color: #666; margin-bottom: 25px; font-style: italic; }
+
+.btn-folk {
+    background: #8b4513; color: #fdf5e6; border: 2px solid #5d4037;
+    padding: 12px 30px; font-size: 1.1rem; font-weight: bold;
+    cursor: pointer; border-radius: 6px; text-transform: uppercase;
+    transition: all 0.3s ease; box-shadow: 2px 4px 6px rgba(0,0,0,0.3);
+}
+.btn-folk:hover { background: #a52a2a; transform: translateY(-2px); box-shadow: 2px 6px 10px rgba(0,0,0,0.4); }
+.btn-folk:active { transform: translateY(1px); }
+
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* =========================================
+   UI CỬA HÀNG NÂNG CẤP (SHOP MODAL)
+========================================= */
+.shop-modal-content {
+    max-width: 850px !important;
+    width: 95%;
+    max-height: 90vh; /* Giới hạn chiều cao tối đa bằng 90% màn hình */
+    overflow-y: auto; /* Hiện thanh cuộn mượt mà nếu màn hình quá thấp */
+    padding: 20px 30px !important; /* Ép nhỏ padding tổng của modal lại */
+}
+
+/* Tùy chỉnh lại thanh cuộn cho Modal nhìn xịn hơn (Webkit) */
+.shop-modal-content::-webkit-scrollbar { width: 8px; }
+.shop-modal-content::-webkit-scrollbar-track { background: #fdf5e6; border-radius: 10px; }
+.shop-modal-content::-webkit-scrollbar-thumb { background: #deb887; border-radius: 10px; }
+.shop-modal-content::-webkit-scrollbar-thumb:hover { background: #8b4513; }
+
+.shop-turn-title {
+    color: #a52a2a;
+    font-family: 'Times New Roman', serif;
+    font-size: 1.5rem; /* Thu nhỏ font title xuống 1 xíu */
+    border-bottom: 2px dashed #deb887;
+    padding-bottom: 8px;
+    margin-bottom: 10px; /* Ép margin nhỏ lại (cũ 20px) */
+    margin-top: 0;
     text-align: center;
-    box-shadow: inset 0 0 5px rgba(64, 224, 208, 0.3);
+}
+
+.shop-player-area {
+    transition: all 0.4s ease;
+    padding: 8px 15px; /* Giảm padding khu vực của mỗi người chơi */
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* Làm mờ và khóa click khu vực chưa tới lượt */
+.inactive-area {
+    opacity: 0.35;
+    pointer-events: none;
+    filter: grayscale(60%);
+}
+
+.shop-cards-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.card-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px; /* Giảm khoảng cách giữa thẻ và nút roll */
+}
+
+.card-item {
+    width: 135px; /* Thu hẹp chiều ngang thẻ */
+    height: 195px; /* Ép lùn thẻ (cũ là 240px) */
+    background: linear-gradient(145deg, #ffffff, #fdf5e6);
+    border: 2px solid #deb887;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+    position: relative;
+}
+
+.card-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(218, 165, 32, 0.5);
+    border-color: #daa520;
+}
+
+/* Hiệu ứng chọn nhiều thẻ */
+.card-item.selected {
+    border: 3px solid #32cd32;
+    box-shadow: 0 0 15px rgba(50, 205, 50, 0.6);
 }
 
 
-.active-turn .captured-box {
-    box-shadow: 0 0 10px rgba(64, 224, 208, 0.5);
-    border-color: #7fffd4;
-    color: #7fffd4;
+.card-art-placeholder {
+    width: 100%; height: 40%; /* Giảm tỷ lệ khung ảnh xuống */
+    background: #e6d5b8;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; color: #8b4513; font-style: italic;
+    border-bottom: 2px solid #deb887;
 }
 
-.captured-wrapper {
+.card-info {
+    padding: 6px;
+    text-align: center;
+    display: flex; flex-direction: column; height: 60%;
+}
+
+.card-name { font-weight: bold; color: #5d4037; font-size: 0.9rem; margin-bottom: 2px; }
+.card-desc { font-size: 0.7rem; color: #666; flex-grow: 1; line-height: 1.2; overflow: hidden; }
+.card-price { color: #a52a2a; font-size: 1rem; margin-top: 2px; }
+
+/* Nút Roll từng thẻ thu gọn */
+.btn-reroll {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #deb887;
+    color: #8b4513;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+}
+
+.btn-reroll:hover {
+    background: #deb887; color: #fff;
+    transform: rotate(180deg);
+}
+
+.shop-divider {
+    border: 0; height: 2px;
+    background-image: linear-gradient(to right, transparent, #8b4513, transparent);
+    margin: 10px 0; opacity: 0.6; /* Giảm mạnh margin của dải phân cách (cũ 25px) */
+}
+.turn-indicator {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.8rem;
+    color: #5d4037;
+    font-weight: bold;
+    background: #fdf5e6;
+    padding: 5px 25px;
+    border: 3px double #8b4513;
+    border-radius: 30px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    z-index: 900;
+}
+/* =========================================
+   UI KHAY KỸ NĂNG (SKILL TRAY) - PHIÊN BẢN MỚI
+========================================= */
+.skill-tray {
+    display: flex;
+    align-items: center;
+    min-width: 140px;
+    height: 75px;
+    border: 2px solid #bda061;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 5px;
+    position: relative;
+}
+
+.empty-tray-text {
+    color: #bda061;
+    font-size: 0.9rem;
+    margin: auto;
+}
+
+/* Thẻ thu nhỏ nằm trong khay - PHIÊN BẢN MỚI */
+.mini-card {
+    width: 45px; /* Tăng chiều rộng thẻ */
+    height: 65px; /* Tăng chiều cao thẻ */
+    border-radius: 6px; /* Bo góc mượt hơn */
+    border: 2px solid #deb887; /* Viền vàng đồng vững chắc */
+    background-color: #e6d5b8;
+    background-size: cover;
+    background-position: top;
+    position: relative;
+    cursor: help; /* Con trỏ chuột hình dấu hỏi */
+    transition: transform 0.3s ease, z-index 0s;
+    box-shadow: -3px 3px 6px rgba(0,0,0,0.7); /* Đổ bóng sâu hơn */
+}
+
+/* Kỹ thuật xếp chồng: Thẻ sau sẽ đè lên thẻ trước 20px */
+.mini-card:not(:first-child) {
+    margin-left: -20px; /* Điều chỉnh khoảng xếp chồng */
+}
+
+/* Hiệu ứng khi hover: Rút thẻ trồi lên và đẩy z-index lên cao nhất */
+.mini-card:hover {
+    transform: translateY(-20px) scale(1.2); /* Trồi lên cao hơn và lớn hơn */
+    z-index: 50 !important;
+    border-color: #ffd700;
+}
+
+/* Khung Tooltip thông tin thẻ - PHIÊN BẢN MỚI */
+.mini-card-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 120%; /* Nổi lên phía trên thẻ */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 160px;
+    background: rgba(43, 29, 14, 0.95);
+    color: #fdf5e6;
+    text-align: center;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #deb887;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    pointer-events: none; /* Tránh giật lag */
+    transition: opacity 0.2s ease, bottom 0.2s ease;
+    z-index: 100;
+}
+
+.mini-card-tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%; left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(43, 29, 14, 0.95) transparent transparent transparent;
+}
+
+.mini-card:hover .mini-card-tooltip {
+    visibility: visible;
+    opacity: 1;
+    bottom: 130%; /* Trồi lên cao hơn */
+}
+
+.tooltip-title {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+    border-bottom: 1px dashed #8b4513;
+    padding-bottom: 4px;
+}
+
+.tooltip-desc {
+    font-size: 0.75rem;
+    line-height: 1.3;
+    color: #ccc;
+}
+
+/* Nút Nhận thua - Nâng cấp visual */
+.btn-resign {
+    background-color: #8b4513;
+    color: #fdf5e6;
+    border: 2px solid #5d4037;
+    border-radius: 6px;
+    padding: 6px 15px;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+}
+
+.btn-resign:hover {
+    background-color: #a52a2a;
+    transform: translateY(-2px);
+    box-shadow: 2px 4px 8px rgba(0,0,0,0.5);
+}
+
+#skill-tray-p2 .mini-card-tooltip {
+    bottom: auto;
+    top: 120% !important;
+
+    transition: opacity 0.2s ease, top 0.2s ease !important;
+}
+
+#skill-tray-p2 .mini-card:hover .mini-card-tooltip {
+    bottom: auto;
+    top: 130% !important;
+}
+
+#skill-tray-p2 .mini-card-tooltip::after {
+    top: auto;
+    bottom: 100% !important;
+    border-color: transparent transparent rgba(43, 29, 14, 0.95) transparent !important;
+}
+
+/* =========================================
+   UI CHỌN HƯỚNG RẢI QUÂN (FLOATING ARROWS)
+========================================= */
+.direction-selector {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 20px; /* Khoảng cách giữa 2 mũi tên */
+    z-index: 100;
+    /* Hiệu ứng nảy popup nhẹ nhàng */
+    animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.arrow-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(139, 69, 19, 0.95); /* Màu nâu gỗ dân gian */
+    border: 2px solid #deb887;
+    color: #fdf5e6;
+    font-size: 1.1rem;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
 }
 
-/* Khu vực hiển thị ngọc (rộng một chút để chứa các viên ngọc) */
-.captured-visuals {
-    position: relative;
-    width: 50px;
-    height: 40px;
-    min-width: 50px;
-    min-height: 40px;
-    pointer-events: none;
+.arrow-btn:hover {
+    background: #a52a2a;
+    transform: scale(1.15);
+    border-color: #ffd700;
 }
 
-/* Các viên ngọc được ép size nhỏ nhắn, có viền sáng */
-.captured-visuals img {
-    position: absolute;
-    width: 25px !important;
-    height: 25px !important;
-    object-fit: contain;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
-    top: 50%;
-    left: 50%;
+@keyframes popIn {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+/* =========================================
+   UI KÍCH HOẠT KỸ NĂNG (ULTIMATE SKILL)
+========================================= */
+.skill-activation-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px); /* Hiệu ứng làm mờ nền */
+    z-index: 5000; /* Nổi lên trên cùng */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden; /* Mặc định ẩn */
+    opacity: 0;
+}
+
+.skill-slogan {
+    font-family: 'Dancing Script', serif;
+    font-size: 4rem;
+    color: #ffd700;
+    text-shadow: 2px 2px 0 #8b4513, -1px -1px 0 #8b4513, 0 0 20px #ff8c00;
+    margin-top: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+/* Khung chứa thẻ ảo khi bay */
+.flying-card-container {
+    perspective: 1000px; /* Tạo không gian 3D để lật thẻ */
+}
+
+.flying-card {
+    width: 135px;
+    height: 195px;
+    border-radius: 8px;
+    border: 3px solid #ffd700;
+    background-size: cover;
+    background-position: top;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+}
+/* =========================================
+   HIỆU ỨNG CHỌN MỤC TIÊU BÀN CỜ
+========================================= */
+.targetable-hole {
+    animation: squareGlow 1.5s infinite;
+    cursor: crosshair !important; /* Đổi con trỏ chuột thành hình ngắm bắn */
+}
+
+@keyframes squareGlow {
+    0% {
+        /* inset giúp viền sáng bo sát vào bên trong mép của ô cờ */
+        box-shadow: inset 0 0 0 2px #32cd32;
+        background-color: rgba(50, 205, 50, 0.05);
+    }
+    50% {
+        box-shadow: inset 0 0 0 4px #32cd32, inset 0 0 20px #32cd32;
+        background-color: rgba(50, 205, 50, 0.25);
+    }
+    100% {
+        box-shadow: inset 0 0 0 2px #32cd32;
+        background-color: rgba(50, 205, 50, 0.05);
+    }
+
+}
+#tray-p1,
+#tray-p2,
+.player-tray {
+    position: relative !important;
+    z-index: 2000 !important;
 }

@@ -8,7 +8,17 @@ public class GameManager {
     public Player player1;
     public Player player2;
     public Player currentPlayer;
+    public int halfMoveCount = 0;
+    public int fullTurnCount = 0;
+    public boolean inShop = false;
+    public int shopEventId;
+    public int lastShopOpenedAtTurn = 0;
+    public boolean p1ShopDone;
+    public boolean p2ShopDone;
+    public List<Card> p1ShopOptions = new ArrayList<>();
+    public List<Card> p2ShopOptions = new ArrayList<>();
     public List<Integer> lastAnimationPath = new ArrayList<>();
+    public String lastScatterEvent = null;
     public GameManager(String p1Name, String p2Name) {
         player1 = new Player(p1Name, 1);
         player2 = new Player(p2Name, 2);
@@ -26,6 +36,7 @@ public class GameManager {
     }
 
     public void playTurn(int startIndex, int direction) {
+        this.lastScatterEvent = null;
         Turn currentTurn = new Turn(currentPlayer);
         currentTurn.startIndex = startIndex;
         currentTurn.direction = direction;
@@ -92,11 +103,7 @@ public class GameManager {
 
             double captured = board[targetIndex].calcScore();
             int actualPieces = board[targetIndex].mandarinPieces + board[targetIndex].citizenPieces;
-
-            // Bốc sạch quân ra khỏi ô
             board[targetIndex].pickUpPieces();
-
-            // CỘNG VÀO TÀI KHOẢN NGƯỜI CHƠI
             currentPlayer.score += captured;
             currentPlayer.capturedCount += actualPieces;
 
@@ -114,6 +121,7 @@ public class GameManager {
     }
 
     public boolean isValidMove(int index) {
+        if (inShop) return false;
         if (board[index].isMandarin) return false;
         if (board[index].citizenPieces == 0) return false;
 
@@ -123,7 +131,97 @@ public class GameManager {
         return true;
     }
 
+    public boolean isGameOver() {
+        boolean isMandarin1Empty = (board[5].mandarinPieces == 0 && board[5].citizenPieces == 0);
+        boolean isMandarin2Empty = (board[11].mandarinPieces == 0 && board[11].citizenPieces == 0);
+
+        return (isMandarin1Empty && isMandarin2Empty) || isDeadlock();
+    }
     public void switchTurn() {
         currentPlayer = (currentPlayer == player1) ? player2 : player1;
+        if (!isGameOver()) {
+            checkAndScatterPieces();
+        }
+        halfMoveCount++;
+        if (halfMoveCount % 2 == 0) fullTurnCount++;
+        if (fullTurnCount > 0
+                && (fullTurnCount == 5 || fullTurnCount == 10 || fullTurnCount == 15)
+                && !inShop
+                && lastShopOpenedAtTurn != fullTurnCount) {
+
+            lastShopOpenedAtTurn = fullTurnCount;
+            openShop();
+        }
+        // Cho test nhanh shop
+//        if (fullTurnCount > 0 && !inShop && lastShopOpenedAtTurn != fullTurnCount) {
+//            lastShopOpenedAtTurn = fullTurnCount;
+//            openShop();
+//        }
+    }
+    private void checkAndScatterPieces() {
+        int startIdx = (currentPlayer.playerId == 1) ? 0 : 6;
+        int endIdx = (currentPlayer.playerId == 1) ? 4 : 10;
+
+        boolean isEmpty = true;
+        for (int i = startIdx; i <= endIdx; i++) {
+            if (board[i].citizenPieces > 0) {
+                isEmpty = false;
+                break;
+            }
+        }
+
+        if (isEmpty) {
+            Player opponent = (currentPlayer == player1) ? player2 : player1;
+            int needed = 5;
+
+            if (currentPlayer.capturedCount >= needed) {
+                currentPlayer.capturedCount -= needed;
+                currentPlayer.score -= needed;
+                this.lastScatterEvent = "P" + currentPlayer.playerId + "_OWN";
+            }
+            else {
+                int borrowed = needed - currentPlayer.capturedCount;
+
+                currentPlayer.score -= currentPlayer.capturedCount;
+                currentPlayer.capturedCount = 0;
+
+                currentPlayer.score -= borrowed;
+                opponent.score += borrowed;
+                opponent.capturedCount -= borrowed;
+
+                this.lastScatterEvent = "P" + currentPlayer.playerId + "_BORROW";
+            }
+
+            for (int i = startIdx; i <= endIdx; i++) {
+                board[i].citizenPieces = 1;
+            }
+        }
+    }
+    public boolean isDeadlock() {
+        int totalPieces = 0;
+        for (Tile t : board) {
+            totalPieces += t.citizenPieces + t.mandarinPieces;
+        }
+        return totalPieces <= 5;
+    }
+
+    private void openShop() {
+        inShop = true;
+        shopEventId++;
+
+        p1ShopDone = false;
+        p2ShopDone = false;
+
+        //cho ae len them card, h test bang bonusseed
+        List<Card> options = new ArrayList<>();
+        options.add(new BonusSeedCard());
+        options.add(new BonusSeedCard());
+        options.add(new BonusSeedCard());
+        p1ShopOptions = options;
+        List<Card> options2 = new ArrayList<>();
+        options2.add(new BonusSeedCard());
+        options2.add(new BonusSeedCard());
+        options2.add(new BonusSeedCard());
+        p2ShopOptions = options2;
     }
 }
