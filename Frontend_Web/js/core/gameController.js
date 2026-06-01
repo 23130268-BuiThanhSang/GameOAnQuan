@@ -88,8 +88,26 @@ const GameController = {
         const responseData = await ApiClient.sendMove(startIndex, direction);
 
         if (!responseData || responseData.status === "error") {
+            // Nếu backend báo đang ở Shop thì mở lại popup Shop
+            if (responseData?.inShop) {
+                this.isAnimating = false;
+                ShopController.openShop(responseData);
+                return;
+            }
+
             alert(responseData?.message || "Nước đi không hợp lệ!");
             this.isAnimating = false;
+            return;
+        }
+
+        if (responseData.inShop) {
+            this.isAnimating = false;
+            this.removeDirectionSelector?.();
+
+            setTimeout(() => {
+                ShopController.openShop(responseData);
+            }, 200);
+
             return;
         }
 
@@ -99,8 +117,9 @@ const GameController = {
         }
         const onTurnFinished = () => {
             BoardRender.renderFullState(responseData);
+
             GameController.currentPlayerId = responseData.currentPlayer;
-            GameController.isAnimating = false; // Mở khóa bàn cờ
+            GameController.isAnimating = false;
 
             if (responseData.fullTurnCount !== undefined) {
                 const turnDisplay = document.getElementById('current-turn-display');
@@ -109,11 +128,15 @@ const GameController = {
                 }
             }
 
-            if (responseData.inShop) {
+            // Nếu backend báo tới Shop thì mở popup Shop
+            if (responseData.inShop === true) {
                 setTimeout(() => {
                     ShopController.openShop(responseData);
                 }, 300);
+                return;
             }
+
+            GameController.isAnimating = false;
         };
 
         Animation.animateRaiQuan(

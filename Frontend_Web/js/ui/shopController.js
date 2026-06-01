@@ -227,7 +227,7 @@ addCardToTray: function(playerId, cardId) {
             alert("Không thể kết nối Backend để dùng thẻ!");
         }
     },
-    },
+
 
     confirmSelection: async function() {
         const playerId = this.currentShopTurn;
