@@ -159,7 +159,7 @@ addCardToTray: function(playerId, cardId) {
             ShopController.useCard(playerId, cardId, miniCard);
         };
     }
-    // BONUS_SEED chỉ hiển thị trong khay như code cũ, không click dùng
+    // BONUS_SEED chỉ hiển thị trong khay, không click dùng
     else {
         miniCard.innerHTML = `
             <div class="mini-card-tooltip">
@@ -181,7 +181,7 @@ addCardToTray: function(playerId, cardId) {
                 return;
             }
 
-            // Các thẻ cũ giữ theo code mới của nhóm
+
             SkillController.activateSkill(miniCard, cardInfo.id, "Nhân phẩm bùng nổ!!!");
         };
 

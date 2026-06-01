@@ -88,7 +88,6 @@ const GameController = {
         const responseData = await ApiClient.sendMove(startIndex, direction);
 
         if (!responseData || responseData.status === "error") {
-            // Nếu backend báo đang ở Shop thì mở lại popup Shop
             if (responseData?.inShop) {
                 this.isAnimating = false;
                 ShopController.openShop(responseData);
@@ -100,16 +99,6 @@ const GameController = {
             return;
         }
 
-        if (responseData.inShop) {
-            this.isAnimating = false;
-            this.removeDirectionSelector?.();
-
-            setTimeout(() => {
-                ShopController.openShop(responseData);
-            }, 200);
-
-            return;
-        }
 
         const movingPlayerId = this.currentPlayerId;
         if (responseData && responseData.status === "game_complete") {
@@ -128,7 +117,6 @@ const GameController = {
                 }
             }
 
-            // Nếu backend báo tới Shop thì mở popup Shop
             if (responseData.inShop === true) {
                 setTimeout(() => {
                     ShopController.openShop(responseData);
