@@ -131,28 +131,86 @@ const ShopController = {
             GameController.isAnimating = false;
         }
     },
-    addCardToTray: function(playerId, cardId) {
-        const tray = document.getElementById(`skill-tray-p${playerId}`);
-        const shopData = (playerId === 1) ? this.shopDataP1 : this.shopDataP2;
+addCardToTray: function(playerId, cardId) {
+    const tray = document.getElementById(`skill-tray-p${playerId}`);
+    const shopData = (playerId === 1) ? this.shopDataP1 : this.shopDataP2;
 
-        const cardInfo = shopData.find(c => c.id === cardId);
-        if (!cardInfo) return;
+    const cardInfo = shopData.find(c => c.id === cardId);
+    if (!cardInfo) return;
 
-        const emptyText = tray.querySelector('.empty-tray-text');
-        if (emptyText) emptyText.remove();
+    const emptyText = tray.querySelector('.empty-tray-text');
+    if (emptyText) emptyText.remove();
 
-        const miniCard = document.createElement('div');
-        miniCard.className = 'mini-card';
-        miniCard.style.backgroundImage = `url('assets/images/skills/${cardInfo.id}.png')`;
+    const miniCard = document.createElement('div');
+    miniCard.className = 'mini-card';
+    miniCard.style.backgroundImage = `url('assets/images/skills/${cardInfo.id}.png'), url('assets/images/skills/BONUS_SEED.png')`;
 
+    // DOUBLE_CAPTURE mới cần bấm kích hoạt
+    if (cardId === 'DOUBLE_CAPTURE') {
+        miniCard.innerHTML = `
+            <div class="mini-card-tooltip">
+                <div class="tooltip-title">${cardInfo.name}</div>
+                <div class="tooltip-desc">${cardInfo.description}</div>
+                <div class="tooltip-desc"><b>Bấm để kích hoạt</b></div>
+            </div>
+        `;
+
+        miniCard.onclick = () => {
+            ShopController.useCard(playerId, cardId, miniCard);
+        };
+    }
+    // BONUS_SEED chỉ hiển thị trong khay như code cũ, không click dùng
+    else {
         miniCard.innerHTML = `
             <div class="mini-card-tooltip">
                 <div class="tooltip-title">${cardInfo.name}</div>
                 <div class="tooltip-desc">${cardInfo.description}</div>
             </div>
         `;
+    }
 
-        tray.appendChild(miniCard);
+    tray.appendChild(miniCard);
+},
+
+    useCard: async function(playerId, cardId, miniCardElement) {
+        if (cardId !== 'DOUBLE_CAPTURE') {
+            return;
+        }
+
+        const confirmUse = confirm("Bạn có muốn dùng thẻ Nhân đôi điểm không?");
+
+        if (!confirmUse) return;
+
+        try {
+            const response = await fetch('http://localhost:8080/api/game/card/use', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    playerId: playerId,
+                    cardId: cardId
+                })
+            });
+
+            const data = await response.json();
+
+            if (!data || data.status === 'error') {
+                alert(data?.message || "Không thể dùng thẻ!");
+                return;
+            }
+
+            alert("Đã kích hoạt thẻ Nhân đôi điểm! Lượt đi tiếp theo của bạn sẽ được nhân đôi điểm ăn được.");
+
+            // Chỉ xóa thẻ DOUBLE_CAPTURE khỏi khay
+            if (miniCardElement && cardId === 'DOUBLE_CAPTURE') {
+                miniCardElement.remove();
+            }
+
+            BoardRender.renderFullState(data);
+
+        } catch (error) {
+            console.error("Lỗi khi dùng thẻ:", error);
+            alert("Không thể kết nối Backend để dùng thẻ!");
+        }
     },
 
     confirmSelection: async function() {

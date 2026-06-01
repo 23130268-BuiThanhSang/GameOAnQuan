@@ -81,6 +81,9 @@ public class GameManager {
 
         executeHooks(TriggerTime.END_TURN, currentTurn);
         this.lastAnimationPath = currentTurn.animationPath;
+
+        currentPlayer.doubleScoreNextMove = false;
+
         switchTurn();
     }
 
@@ -102,8 +105,14 @@ public class GameManager {
             executeHooks(TriggerTime.BEFORE_CAPTURE, currentTurn);
 
             double captured = board[targetIndex].calcScore();
+
+            if (currentPlayer.doubleScoreNextMove) {
+                captured *= 2;
+            }
+
             int actualPieces = board[targetIndex].mandarinPieces + board[targetIndex].citizenPieces;
             board[targetIndex].pickUpPieces();
+
             currentPlayer.score += captured;
             currentPlayer.capturedCount += actualPieces;
 
@@ -210,12 +219,12 @@ public class GameManager {
         //cho ae len them card, h test bang bonusseed
         List<Card> options = new ArrayList<>();
         options.add(new BonusSeedCard());
-        options.add(new BonusSeedCard());
+        options.add(new DoubleCaptureCard());
         options.add(new BonusSeedCard());
         p1ShopOptions = options;
         List<Card> options2 = new ArrayList<>();
         options2.add(new BonusSeedCard());
-        options2.add(new BonusSeedCard());
+        options2.add(new DoubleCaptureCard());
         options2.add(new BonusSeedCard());
         p2ShopOptions = options2;
     }
