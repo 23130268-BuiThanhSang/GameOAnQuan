@@ -8,6 +8,7 @@ const GameController = {
     isGameOver: false,
     currentPlayerId: 1,
     selectedHoleId: null,
+    pendingSkillId: null,
 
     getBackendIndex(holeId) {
         if (holeId === "quan-right") return 5;
@@ -23,6 +24,10 @@ const GameController = {
 
     async handleTileClick(holeId) {
         if (this.isAnimating || this.isGameOver) return;
+        if (this.pendingSkillId !== null) {
+            SkillController.handleSkillTargeting(holeId, this.pendingSkillId);
+            return;
+        }
         if (holeId === "quan-right" || holeId === "quan-left") return;
         this.removeDirectionSelector();
         this.selectedHoleId = holeId;
