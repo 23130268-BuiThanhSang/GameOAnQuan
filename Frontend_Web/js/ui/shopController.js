@@ -169,8 +169,24 @@ addCardToTray: function(playerId, cardId) {
         `;
     }
 
-    tray.appendChild(miniCard);
-},
+        miniCard.onclick = () => {
+            if (GameController.currentPlayerId !== playerId) {
+                alert("Chưa tới lượt, không được xài ké thẻ của người khác!");
+                return;
+            }
+
+            // DOUBLE_CAPTURE: gọi API để kích hoạt nhân đôi điểm lượt sau
+            if (cardInfo.id === 'DOUBLE_CAPTURE') {
+                ShopController.useCard(playerId, cardInfo.id, miniCard);
+                return;
+            }
+
+            // Các thẻ cũ giữ theo code mới của nhóm
+            SkillController.activateSkill(miniCard, cardInfo.id, "Nhân phẩm bùng nổ!!!");
+        };
+
+        tray.appendChild(miniCard);
+    },
 
     useCard: async function(playerId, cardId, miniCardElement) {
         if (cardId !== 'DOUBLE_CAPTURE') {
@@ -200,8 +216,7 @@ addCardToTray: function(playerId, cardId) {
 
             alert("Đã kích hoạt thẻ Nhân đôi điểm! Lượt đi tiếp theo của bạn sẽ được nhân đôi điểm ăn được.");
 
-            // Chỉ xóa thẻ DOUBLE_CAPTURE khỏi khay
-            if (miniCardElement && cardId === 'DOUBLE_CAPTURE') {
+            if (miniCardElement) {
                 miniCardElement.remove();
             }
 
@@ -211,6 +226,7 @@ addCardToTray: function(playerId, cardId) {
             console.error("Lỗi khi dùng thẻ:", error);
             alert("Không thể kết nối Backend để dùng thẻ!");
         }
+    },
     },
 
     confirmSelection: async function() {
