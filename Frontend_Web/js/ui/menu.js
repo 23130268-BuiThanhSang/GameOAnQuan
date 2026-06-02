@@ -9,7 +9,8 @@ const MenuController = {
     init() {
         const savedP1 = localStorage.getItem('oanquan_p1') || "";
         const savedP2 = localStorage.getItem('oanquan_p2') || "";
-        this.isAudioEnabled = localStorage.getItem('oanquan_audio') !== 'false';
+        const savedAudio = localStorage.getItem('oanquan_audio');
+        this.isAudioEnabled = savedAudio === 'true';
 
         document.getElementById('p1NameInput').value = savedP1;
         document.getElementById('p2NameInput').value = savedP2;
@@ -24,10 +25,22 @@ const MenuController = {
     toggleAudio() {
         this.isAudioEnabled = !this.isAudioEnabled;
         localStorage.setItem('oanquan_audio', this.isAudioEnabled);
+        if(this.isAudioEnabled){
+            AudioController.playBgm("menu");
+        }
+        else{
+            if(AudioController.currentBgm){
+                AudioController.currentBgm.pause();
+            }
+        }
         this.updateAudioButton();
     },
 
     startGame() {
+        if (this.isAudioEnabled) {
+            AudioController.playBgm("battle");
+        }
+
         const p1Name = document.getElementById('p1NameInput').value.trim() || "Player 1";
         const p2Name = document.getElementById('p2NameInput').value.trim() || "Player 2";
 
@@ -53,6 +66,10 @@ const MenuController = {
 
     backToMenu() {
         if(!confirm("Bạn muốn thoát ra Menu chính?")) return;
+
+        AudioController.playBgm(
+            "menu"
+        );
 
         const menu = document.getElementById('menu-screen');
         const game = document.getElementById('game-screen');
