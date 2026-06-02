@@ -175,7 +175,7 @@ const GameController = {
                 document.getElementById('gameOverModal').style.display = 'flex';
 
                 const gameOverSound = new Audio('assets/sounds/win.mp3');
-                gameOverSound.play().catch(()=>{});
+                AudioController.play('gameOver');
             } else {
                 console.warn("Lỗi logic: Server không trả về game_complete", responseData);
             }

@@ -13,17 +13,36 @@ const MenuController = {
 
         document.getElementById('p1NameInput').value = savedP1;
         document.getElementById('p2NameInput').value = savedP2;
+        if (typeof AudioController !== 'undefined') {
+                AudioController.init();
+                AudioController.setEnabled(this.isAudioEnabled);
+            }
         this.updateAudioButton();
     },
 
     updateAudioButton() {
         const btn = document.getElementById('btnToggleAudio');
-        btn.innerText = `ÂM THANH: ${this.isAudioEnabled ? 'BẬT 🔊' : 'TẮT 🔇'}`;
+        if (btn) {
+                btn.innerText = `ÂM THANH: ${this.isAudioEnabled ? 'BẬT 🔊' : 'TẮT 🔇'}`;
+            }
+
+            const gameBtn = document.getElementById('btnToggleAudioGame');
+            if (gameBtn) {
+                gameBtn.innerHTML = this.isAudioEnabled
+                    ? '<i class="fa-solid fa-volume-high"></i>'
+                    : '<i class="fa-solid fa-volume-xmark"></i>';
+                gameBtn.title = `ÂM THANH: ${this.isAudioEnabled ? 'BẬT' : 'TẮT'}`;
+            }
     },
 
     toggleAudio() {
         this.isAudioEnabled = !this.isAudioEnabled;
         localStorage.setItem('oanquan_audio', this.isAudioEnabled);
+
+        if (typeof AudioController !== 'undefined') {
+                AudioController.setEnabled(this.isAudioEnabled);
+            }
+
         this.updateAudioButton();
     },
 
