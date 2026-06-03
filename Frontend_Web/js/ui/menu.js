@@ -9,13 +9,10 @@ const MenuController = {
     init() {
         const savedP1 = localStorage.getItem('oanquan_p1') || "";
         const savedP2 = localStorage.getItem('oanquan_p2') || "";
-        // Giữ cách check localStorage an toàn của bạn A
         this.isAudioEnabled = localStorage.getItem('oanquan_audio') !== 'false';
 
         document.getElementById('p1NameInput').value = savedP1;
         document.getElementById('p2NameInput').value = savedP2;
-
-        // Giữ kiểm tra an toàn và khởi tạo AudioController của bạn A
         if (typeof AudioController !== 'undefined') {
             AudioController.init();
             AudioController.setEnabled(this.isAudioEnabled);
@@ -25,7 +22,6 @@ const MenuController = {
     },
 
     updateAudioButton() {
-        // Cập nhật cả nút ngoài Menu và nút trong Game của bạn A
         const btn = document.getElementById('btnToggleAudio');
         if (btn) {
             btn.innerText = `ÂM THANH: ${this.isAudioEnabled ? 'BẬT 🔊' : 'TẮT 🔇'}`;
@@ -45,12 +41,8 @@ const MenuController = {
         localStorage.setItem('oanquan_audio', this.isAudioEnabled);
 
         if (typeof AudioController !== 'undefined') {
-            // Cập nhật trạng thái tổng
             AudioController.setEnabled(this.isAudioEnabled);
-
-            // Kết hợp logic bật/tắt nhạc tức thời của bạn B
             if (this.isAudioEnabled) {
-                // Kiểm tra xem đang ở Menu hay trong Game để bật đúng nhạc
                 const gameScreen = document.getElementById('game-screen');
                 const isInGame = gameScreen && gameScreen.style.display === 'flex';
                 AudioController.playBgm(isInGame ? "battle" : "menu");
@@ -65,7 +57,6 @@ const MenuController = {
     },
 
     startGame() {
-        // Logic bật nhạc battle của bạn B (đã bọc thêm check an toàn)
         if (this.isAudioEnabled && typeof AudioController !== 'undefined') {
             AudioController.playBgm("battle");
         }
@@ -95,8 +86,6 @@ const MenuController = {
 
     backToMenu() {
         if(!confirm("Bạn muốn thoát ra Menu chính?")) return;
-
-        // Logic đổi về nhạc menu của bạn B (đã bọc thêm check an toàn)
         if (this.isAudioEnabled && typeof AudioController !== 'undefined') {
             AudioController.playBgm("menu");
         }
