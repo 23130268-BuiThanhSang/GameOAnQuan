@@ -96,7 +96,7 @@ public class GameController {
             Tile tile = game.board[i];
             response.board.put(
                     BoardMapper.getTileName(i),
-                    new TileDto(tile.mandarinPieces, tile.citizenPieces, tile.mult)
+                    new TileDto(tile.mandarinPieces, tile.citizenPieces, tile.mult,tile.lockedTurns)
             );
         }
 
@@ -193,7 +193,12 @@ public class GameController {
             fillGameState(response);
             return response;
         }
-
+        if (buyer.cardInventory.size() >= 3) {
+            response.status = "error";
+            response.message = "Khay thẻ của bạn đã đầy (Tối đa 3 thẻ)!";
+            fillGameState(response);
+            return response;
+        }
         buyer.score -= chosen.cost;
 
         Card bought = CardStorage.createById(cardId);
@@ -206,7 +211,11 @@ public class GameController {
         }
 
         buyer.cardInventory.add(cardId);
-
+        if (playerId == 1) {
+            game.p1BoughtCards.add(cardId);
+        } else {
+            game.p2BoughtCards.add(cardId);
+        }
         response.status = "success";
         response.message = "Player " + playerId + " bought " + cardId + " for " + chosen.cost + " score.";
         fillGameState(response);

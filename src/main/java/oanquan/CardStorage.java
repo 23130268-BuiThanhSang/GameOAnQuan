@@ -9,7 +9,7 @@ public class CardStorage {
 
         cards.add(new BonusSeedCard());
         cards.add(new DoubleCaptureCard());
-
+        cards.add(new LockTileCard());
         return cards;
     }
 
@@ -21,7 +21,9 @@ public class CardStorage {
         if ("DOUBLE_CAPTURE".equals(id)) {
             return new DoubleCaptureCard();
         }
-
+        if ("LOCK_TILE".equals(id)) {
+            return new LockTileCard();
+        }
         return null;
     }
 }

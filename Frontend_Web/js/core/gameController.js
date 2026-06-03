@@ -22,7 +22,9 @@ const GameController = {
         return `dan-${index}`;
     },
 
-    async handleTileClick(holeId) {
+    async handleTileClick(holeId, event) {
+        if (event) event.stopPropagation();
+
         if (this.pendingSkillId !== null) {
             if (typeof SkillController !== 'undefined') {
                 SkillController.handleSkillTargeting(holeId, this.pendingSkillId);
@@ -99,11 +101,11 @@ const GameController = {
             return;
         }
 
-
         const movingPlayerId = this.currentPlayerId;
         if (responseData && responseData.status === "game_complete") {
             this.isGameOver = true;
         }
+
         const onTurnFinished = () => {
             BoardRender.renderFullState(responseData);
 
@@ -171,11 +173,11 @@ const GameController = {
                 }
 
                 document.getElementById('winnerName').innerText = `${winnerDisplayName} Thắng Áp Đảo!`;
-
                 document.getElementById('gameOverModal').style.display = 'flex';
 
-                const gameOverSound = new Audio('assets/sounds/win.mp3');
-                AudioController.play('gameOver');
+                if (typeof AudioController !== 'undefined') {
+                    AudioController.play('gameOver');
+                }
             } else {
                 console.warn("Lỗi logic: Server không trả về game_complete", responseData);
             }

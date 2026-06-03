@@ -108,6 +108,19 @@ const BoardRender = {
         // 3. Vẽ lại 12 ô cờ
         for (const [holeId, tileData] of Object.entries(gameState.board)) {
             this.updateHoleDOM(holeId, tileData);
+
+            const holeEl = document.getElementById(holeId);
+            if (!holeEl) continue;
+            holeEl.classList.remove('locked-tile-visual');
+            const oldLock = holeEl.querySelector('.lock-icon-overlay');
+            const oldBadge = holeEl.querySelector('.cooldown-badge');
+            if (oldLock) oldLock.remove();
+            if (oldBadge) oldBadge.remove();
+            if (tileData.lockedTurns > 0) {
+                holeEl.classList.add('locked-tile-visual');
+                holeEl.insertAdjacentHTML('beforeend', `<i class="fa-solid fa-lock lock-icon-overlay"></i>`);
+                holeEl.insertAdjacentHTML('beforeend', `<div class="cooldown-badge">${tileData.lockedTurns}</div>`);
+            }
         }
     },
     // HÀM MỚI 1: Bốc sạch ngọc ở ô bắt đầu

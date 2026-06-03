@@ -8,6 +8,7 @@ public class Tile {
     public int citizenPieces;
     public int mandarinPieces;
     public double mult;
+    public int lockedTurns = 0;
     public Tile(int id, boolean isMandarin) {
         this.id = id;
         this.isMandarin = isMandarin;

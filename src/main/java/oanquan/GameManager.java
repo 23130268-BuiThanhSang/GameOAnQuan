@@ -7,6 +7,8 @@ import java.util.List;
 public class GameManager {
     public List<String> lastP1ShopCards = new ArrayList<>();
     public List<String> lastP2ShopCards = new ArrayList<>();
+    public List<String> p1BoughtCards = new ArrayList<>();
+    public List<String> p2BoughtCards = new ArrayList<>();
     public Tile[] board;
     public Player player1;
     public Player player2;
@@ -54,7 +56,9 @@ public class GameManager {
 
         while (currentTurn.piecesInHand > 0) {
             currentTurn.currentTileIndex = (currentTurn.currentTileIndex + direction + 12) % 12;
-
+            if (board[currentTurn.currentTileIndex].lockedTurns > 0) {
+                continue;
+            }
             executeHooks(TriggerTime.BEFORE_SOW, currentTurn);
 
             board[currentTurn.currentTileIndex].citizenPieces++;
@@ -66,6 +70,9 @@ public class GameManager {
 
             if (currentTurn.piecesInHand == 0) {
                 int nextIndex = (currentTurn.currentTileIndex + direction + 12) % 12;
+                while (board[nextIndex].lockedTurns > 0) {
+                    nextIndex = (nextIndex + direction + 12) % 12;
+                }
 
                 if (board[nextIndex].citizenPieces > 0 || board[nextIndex].mandarinPieces > 0) {
                     if (board[nextIndex].isMandarin) {
@@ -96,7 +103,9 @@ public class GameManager {
 
         while (true) {
             int targetIndex = (checkEmptyIndex + direction + 12) % 12;
-
+            while (board[targetIndex].lockedTurns > 0) {
+                targetIndex = (targetIndex + direction + 12) % 12;
+            }
             if (board[targetIndex].citizenPieces == 0 && board[targetIndex].mandarinPieces == 0) {
                 break;
             }
@@ -106,23 +115,22 @@ public class GameManager {
             currentTurn.currentTileIndex = targetIndex;
 
             executeHooks(TriggerTime.BEFORE_CAPTURE, currentTurn);
-
             double captured = board[targetIndex].calcScore();
-
             captured *= currentTurn.scoreMultiplier;
-
 
             int actualPieces = board[targetIndex].mandarinPieces + board[targetIndex].citizenPieces;
             board[targetIndex].pickUpPieces();
 
             currentPlayer.score += captured;
             currentPlayer.capturedCount += actualPieces;
-
             currentTurn.animationPath.add(targetIndex);
 
             executeHooks(TriggerTime.AFTER_CAPTURE, currentTurn);
-
             int nextEmptyCheck = (targetIndex + direction + 12) % 12;
+            while (board[nextEmptyCheck].lockedTurns > 0) {
+                nextEmptyCheck = (nextEmptyCheck + direction + 12) % 12;
+            }
+
             if (board[nextEmptyCheck].citizenPieces == 0 && board[nextEmptyCheck].mandarinPieces == 0) {
                 checkEmptyIndex = nextEmptyCheck;
             } else {
@@ -135,7 +143,7 @@ public class GameManager {
         if (inShop) return false;
         if (board[index].isMandarin) return false;
         if (board[index].citizenPieces == 0) return false;
-
+        if (board[index].lockedTurns > 0) return false;
         if (currentPlayer.playerId == 1 && (index < 0 || index > 4)) return false;
         if (currentPlayer.playerId == 2 && (index < 6 || index > 10)) return false;
 
@@ -154,7 +162,13 @@ public class GameManager {
             checkAndScatterPieces();
         }
         halfMoveCount++;
-        if (halfMoveCount % 2 == 0) fullTurnCount++;
+        if (halfMoveCount % 2 == 0) {
+            fullTurnCount++;
+
+            for (Tile t : board) {
+                if (t.lockedTurns > 0) t.lockedTurns--;
+            }
+        }
 //        if (fullTurnCount > 0
 //                && (fullTurnCount == 5 || fullTurnCount == 10 || fullTurnCount == 15)
 //                && !inShop
@@ -216,16 +230,22 @@ public class GameManager {
         return totalPieces <= 5;
     }
 
-    private List<Card> generateShopOptions(List<String> lastShopHistory) {
+    private List<Card> generateShopOptions(List<String> lastShopHistory, List<String> boughtCards) {
         List<Card> allCards = CardStorage.allCards();
         List<Card> availableCards = new ArrayList<>();
+
         for (Card c : allCards) {
-            if (!lastShopHistory.contains(c.id)) {
+            if (!lastShopHistory.contains(c.id) && !boughtCards.contains(c.id)) {
                 availableCards.add(c);
             }
         }
+
         if (availableCards.isEmpty()) {
-            availableCards = new ArrayList<>(allCards);
+            for (Card c : allCards) {
+                if (!boughtCards.contains(c.id)) {
+                    availableCards.add(c);
+                }
+            }
         }
 
         Collections.shuffle(availableCards);
@@ -248,9 +268,8 @@ public class GameManager {
         shopEventId++;
         p1ShopDone = false;
         p2ShopDone = false;
-
-        p1ShopOptions = generateShopOptions(lastP1ShopCards);
-        p2ShopOptions = generateShopOptions(lastP2ShopCards);
+        p1ShopOptions = generateShopOptions(lastP1ShopCards, p1BoughtCards);
+        p2ShopOptions = generateShopOptions(lastP2ShopCards, p2BoughtCards);
     }
     public boolean useSkill(int playerId, String skillId, int targetIndex) {
         Player p = (playerId == 1) ? player1 : player2;
@@ -263,7 +282,10 @@ public class GameManager {
             p.activeEffects.get(TriggerTime.BEFORE_CAPTURE).add(new DoubleScoreEffect());
             return true;
         }
-
+        if ("LOCK_TILE".equals(skillId)) {
+            board[targetIndex].lockedTurns = 3;
+            return true;
+        }
         return false;
     }
 }

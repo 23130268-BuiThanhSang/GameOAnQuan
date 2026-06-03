@@ -70,6 +70,18 @@ const SkillController = {
                 if (el) el.classList.add('targetable-hole');
             }
         }
+        if (skillId === 'LOCK_TILE') {
+            let start = playerId === 1 ? 6 : 0;
+            let end = playerId === 1 ? 10 : 4;
+
+            for (let i = start; i <= end; i++) {
+                let holeId = GameController.getHoleId(i);
+                let el = document.getElementById(holeId);
+                if (el && !el.classList.contains('locked-tile-visual')) {
+                    el.classList.add('targetable-hole');
+                }
+            }
+        }
     },
     clearHighlights: function() {
         document.querySelectorAll('.targetable-hole').forEach(el => {
@@ -81,10 +93,18 @@ const SkillController = {
         const index = GameController.getBackendIndex(clickedHoleId);
         const playerId = GameController.currentPlayerId;
 
+        if (skillId === 'LOCK_TILE') {
+            let start = playerId === 1 ? 6 : 0;
+            let end = playerId === 1 ? 10 : 4;
+            if (index < start || index > end) {
+                alert("Lệnh cấm vận phải giáng xuống đầu đối thủ! Hãy chọn ô của địch.");
+                return;
+            }
+        }
+
         if (skillId === 'BONUS_SEED') {
             let start = playerId === 1 ? 0 : 6;
             let end = playerId === 1 ? 4 : 10;
-
             if (index < start || index > end) {
                 alert("Hãy chọn vào các ô đang phát sáng của bạn!");
                 return;
@@ -94,7 +114,7 @@ const SkillController = {
         this.clearHighlights();
 
         try {
-            const responseData = await ApiClient.sendUseSkill(playerId,skillId, index);
+            const responseData = await ApiClient.sendUseSkill(playerId, skillId, index);
 
             if (!responseData || responseData.status === "error") {
                 alert("Lỗi khi sử dụng kỹ năng!");
@@ -103,36 +123,39 @@ const SkillController = {
                 return;
             }
 
-            const holeEl = document.getElementById(clickedHoleId);
-            const floatText = document.createElement('div');
-            floatText.innerText = "+1 Sỏi";
-            floatText.style.position = 'absolute';
-            floatText.style.color = '#32cd32';
-            floatText.style.fontWeight = 'bold';
-            floatText.style.fontSize = '1.3rem';
-            floatText.style.textShadow = '1px 1px 2px #000';
-            floatText.style.zIndex = '200';
-            floatText.style.pointerEvents = 'none';
-            floatText.style.top = '30%';
-            floatText.style.left = '50%';
-            floatText.style.transform = 'translate(-50%, 0)';
+            if (skillId === 'BONUS_SEED') {
+                const holeEl = document.getElementById(clickedHoleId);
+                const floatText = document.createElement('div');
+                floatText.innerText = "+1 dân";
+                floatText.style.position = 'absolute';
+                floatText.style.color = '#32cd32';
+                floatText.style.fontWeight = 'bold';
+                floatText.style.fontSize = '1.3rem';
+                floatText.style.textShadow = '1px 1px 2px #000';
+                floatText.style.zIndex = '200';
+                floatText.style.pointerEvents = 'none';
+                floatText.style.top = '30%';
+                floatText.style.left = '50%';
+                floatText.style.transform = 'translate(-50%, 0)';
 
-            if (getComputedStyle(holeEl).position === 'static') {
-                holeEl.style.position = 'relative';
+                if (getComputedStyle(holeEl).position === 'static') {
+                    holeEl.style.position = 'relative';
+                }
+                holeEl.appendChild(floatText);
+
+                if (typeof AudioController !== 'undefined') AudioController.play('drop');
+
+                gsap.to(floatText, {
+                    y: -40, opacity: 0, duration: 1.5, ease: "power1.out",
+                    onComplete: () => floatText.remove()
+                });
+            } else if (skillId === 'LOCK_TILE') {
+                if (typeof AudioController !== 'undefined') AudioController.play('capture');
             }
-            holeEl.appendChild(floatText);
 
-            BoardRender.renderFullState(responseData);
-
-            if (typeof AudioController !== 'undefined') AudioController.play('drop');
-
-            gsap.to(floatText, {
-                y: -40,
-                opacity: 0,
-                duration: 1.5,
-                ease: "power1.out",
-                onComplete: () => floatText.remove()
-            });
+            setTimeout(() => {
+                BoardRender.renderFullState(responseData);
+            }, 50);
 
             GameController.pendingSkillId = null;
             GameController.isAnimating = false;

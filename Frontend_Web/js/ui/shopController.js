@@ -151,7 +151,12 @@ const ShopController = {
                 }
 
 
-                SkillController.activateSkill(miniCard, cardInfo.id, "Nhân phẩm bùng nổ!!!");
+                let slogan = "Nhân phẩm bùng nổ!!!";
+                if (cardInfo.id === 'LOCK_TILE') {
+                    slogan = "Lệnh cấm vận! Nông dân đình công!";
+                }
+
+                SkillController.activateSkill(miniCard, cardInfo.id, slogan);
             };
 
             tray.appendChild(miniCard);
