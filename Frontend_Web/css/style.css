@@ -757,3 +757,41 @@ body::before {
     position: relative !important;
     z-index: 2000 !important;
 }
+.locked-tile-visual {
+    position: relative !important;
+    filter: grayscale(0.6) brightness(0.8);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    min-height: 80px;
+}
+
+.lock-icon-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.5rem;
+    color: #ff4757;
+    text-shadow: 2px 2px 4px #000;
+    pointer-events: none;
+    z-index: 999;
+}
+
+.cooldown-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #ff4757;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    z-index: 1000;
+}

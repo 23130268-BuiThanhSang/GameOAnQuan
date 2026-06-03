@@ -8,8 +8,8 @@ const ApiClient = {
         try {
             const response = await fetch(`${API_BASE_URL}/move`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ startIndex: startIndex, direction: direction })
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({startIndex: startIndex, direction: direction})
             });
 
             if (!response.ok) throw new Error("Lỗi kết nối đến Server!");
@@ -26,8 +26,8 @@ const ApiClient = {
         try {
             const response = await fetch(`${API_BASE_URL}/resign`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ playerId })
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({playerId})
             });
             return await response.json();
         } catch (error) {
@@ -44,6 +44,28 @@ const ApiClient = {
             return await response.json();
         } catch (error) {
             console.error("Lỗi khi reset game:", error);
+            return null;
+        }
+    },
+
+    async sendUseSkill(playerId, skillId, targetIndex) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/card/use`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    playerId: playerId,
+                    cardId: skillId,
+                    targetIndex: targetIndex
+                })
+            });
+
+            if (!response.ok) throw new Error("Lỗi kết nối đến Server khi dùng kỹ năng!");
+            return await response.json();
+
+        } catch (error) {
+            console.error("API Error (UseSkill):", error);
+            alert("Không thể sử dụng kỹ năng do mất kết nối với Server!");
             return null;
         }
     }

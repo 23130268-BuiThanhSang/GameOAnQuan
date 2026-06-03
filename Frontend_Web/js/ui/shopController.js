@@ -99,94 +99,68 @@ const ShopController = {
         alert(`Sẽ gọi API đổi thẻ [${cardId}] thành thẻ mới ở đây!`);
     },
 
-    confirmSelection: async function() {
-        const playerId = this.currentShopTurn;
-        const selectedList = (playerId === 1) ? this.selectedCardsP1 : this.selectedCardsP2;
 
-        try {
-            if (selectedList.length === 0) {
-                await fetch('http://localhost:8080/api/game/shop/skip', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ playerId: playerId })
-                });
-            } else {
-                for (let cId of selectedList) {
-                    await fetch('http://localhost:8080/api/game/shop/buy', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ playerId: playerId, cardId: cId })
-                    });
+    addCardToTray: function(playerId, cardId) {
+        const tray = document.getElementById(`skill-tray-p${playerId}`);
+        const shopData = (playerId === 1) ? this.shopDataP1 : this.shopDataP2;
+
+        const cardInfo = shopData.find(c => c.id === cardId);
+        if (!cardInfo) return;
+
+        const emptyText = tray.querySelector('.empty-tray-text');
+        if (emptyText) emptyText.remove();
+
+        const miniCard = document.createElement('div');
+        miniCard.className = 'mini-card';
+        miniCard.style.backgroundImage = `url('assets/images/skills/${cardInfo.id}.png'), url('assets/images/skills/BONUS_SEED.png')`;
+
+        // DOUBLE_CAPTURE mới cần bấm kích hoạt
+        if (cardId === 'DOUBLE_CAPTURE') {
+            miniCard.innerHTML = `
+                <div class="mini-card-tooltip">
+                    <div class="tooltip-title">${cardInfo.name}</div>
+                    <div class="tooltip-desc">${cardInfo.description}</div>
+                    <div class="tooltip-desc"><b>Bấm để kích hoạt</b></div>
+                </div>
+            `;
+
+            miniCard.onclick = () => {
+                ShopController.useCard(playerId, cardId, miniCard);
+            };
+        }
+        // BONUS_SEED chỉ hiển thị trong khay, không click dùng
+        else {
+            miniCard.innerHTML = `
+                <div class="mini-card-tooltip">
+                    <div class="tooltip-title">${cardInfo.name}</div>
+                    <div class="tooltip-desc">${cardInfo.description}</div>
+                </div>
+            `;
+        }
+
+            miniCard.onclick = () => {
+                if (GameController.currentPlayerId !== playerId) {
+                    alert("Chưa tới lượt, không được xài ké thẻ của người khác!");
+                    return;
                 }
-            }
-        } catch (error) {
-            console.error("Lỗi kết nối Backend lúc chốt thẻ:", error);
-        }
-        if (this.currentShopTurn === 1) {
-            this.currentShopTurn = 2;
-            this.updateTurnUI();
-        } else {
-            document.getElementById('shopModal').style.display = 'none';
-            console.log("Cả hai đã chọn xong, game tiếp tục!");
-            GameController.isAnimating = false;
-        }
-    },
-addCardToTray: function(playerId, cardId) {
-    const tray = document.getElementById(`skill-tray-p${playerId}`);
-    const shopData = (playerId === 1) ? this.shopDataP1 : this.shopDataP2;
 
-    const cardInfo = shopData.find(c => c.id === cardId);
-    if (!cardInfo) return;
-
-    const emptyText = tray.querySelector('.empty-tray-text');
-    if (emptyText) emptyText.remove();
-
-    const miniCard = document.createElement('div');
-    miniCard.className = 'mini-card';
-    miniCard.style.backgroundImage = `url('assets/images/skills/${cardInfo.id}.png'), url('assets/images/skills/BONUS_SEED.png')`;
-
-    // DOUBLE_CAPTURE mới cần bấm kích hoạt
-    if (cardId === 'DOUBLE_CAPTURE') {
-        miniCard.innerHTML = `
-            <div class="mini-card-tooltip">
-                <div class="tooltip-title">${cardInfo.name}</div>
-                <div class="tooltip-desc">${cardInfo.description}</div>
-                <div class="tooltip-desc"><b>Bấm để kích hoạt</b></div>
-            </div>
-        `;
-
-        miniCard.onclick = () => {
-            ShopController.useCard(playerId, cardId, miniCard);
-        };
-    }
-    // BONUS_SEED chỉ hiển thị trong khay, không click dùng
-    else {
-        miniCard.innerHTML = `
-            <div class="mini-card-tooltip">
-                <div class="tooltip-title">${cardInfo.name}</div>
-                <div class="tooltip-desc">${cardInfo.description}</div>
-            </div>
-        `;
-    }
-
-        miniCard.onclick = () => {
-            if (GameController.currentPlayerId !== playerId) {
-                alert("Chưa tới lượt, không được xài ké thẻ của người khác!");
-                return;
-            }
-
-            // DOUBLE_CAPTURE: gọi API để kích hoạt nhân đôi điểm lượt sau
-            if (cardInfo.id === 'DOUBLE_CAPTURE') {
-                ShopController.useCard(playerId, cardInfo.id, miniCard);
-                return;
-            }
+                // DOUBLE_CAPTURE: gọi API để kích hoạt nhân đôi điểm lượt sau
+                if (cardInfo.id === 'DOUBLE_CAPTURE') {
+                    ShopController.useCard(playerId, cardInfo.id, miniCard);
+                    return;
+                }
 
 
-            SkillController.activateSkill(miniCard, cardInfo.id, "Nhân phẩm bùng nổ!!!");
-        };
+                let slogan = "Nhân phẩm bùng nổ!!!";
+                if (cardInfo.id === 'LOCK_TILE') {
+                    slogan = "Lệnh cấm vận! Nông dân đình công!";
+                }
 
-        tray.appendChild(miniCard);
-    },
+                SkillController.activateSkill(miniCard, cardInfo.id, slogan);
+            };
+
+            tray.appendChild(miniCard);
+        },
 
     useCard: async function(playerId, cardId, miniCardElement) {
         if (cardId !== 'DOUBLE_CAPTURE') {
@@ -232,25 +206,32 @@ addCardToTray: function(playerId, cardId) {
     confirmSelection: async function() {
         const playerId = this.currentShopTurn;
         const selectedList = (playerId === 1) ? this.selectedCardsP1 : this.selectedCardsP2;
+        let finalGameState = null;
 
         try {
-            if (selectedList.length === 0) {
-                await fetch('http://localhost:8080/api/game/shop/skip', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ playerId: playerId })
-                });
-            } else {
+            if (selectedList.length > 0) {
                 for (let cId of selectedList) {
-                    await fetch('http://localhost:8080/api/game/shop/buy', {
+                    const response = await fetch('http://localhost:8080/api/game/shop/buy', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ playerId: playerId, cardId: cId })
                     });
+                    const data = await response.json();
 
-                    this.addCardToTray(playerId, cId);
+                    if (data && data.status === "error") {
+                        alert(data.message);
+                    } else {
+                        this.addCardToTray(playerId, cId);
+                    }
                 }
             }
+            const skipResponse = await fetch('http://localhost:8080/api/game/shop/skip', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ playerId: playerId })
+            });
+            finalGameState = await skipResponse.json();
+
         } catch (error) {
             console.error("Lỗi kết nối Backend lúc chốt thẻ:", error);
         }
@@ -263,6 +244,9 @@ addCardToTray: function(playerId, cardId) {
             console.log("Cả hai đã chọn xong, game tiếp tục!");
             GameController.isAnimating = false;
         }
-    }
 
+        if (finalGameState && typeof BoardRender !== 'undefined') {
+            BoardRender.renderFullState(finalGameState);
+        }
+    }
 };

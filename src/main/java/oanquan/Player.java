@@ -7,9 +7,6 @@ public class Player {
     // Kho thẻ kỹ năng của người chơi
     public List<String> cardInventory = new ArrayList<>();
 
-    // Nếu true thì lượt đi tiếp theo được nhân đôi điểm ăn được
-    public boolean doubleScoreNextMove = false;
-
     public String name;
     public double score;
     public int playerId;

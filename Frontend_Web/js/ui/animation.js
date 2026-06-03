@@ -54,10 +54,17 @@ const Animation = {
             let targetIndex = GameController.getBackendIndex(targetId);
 
             while (currIndex !== targetIndex) {
+                // 1. Tính toán ô kế tiếp
                 currIndex = (currIndex + direction + 12) % 12;
                 let stepId = GameController.getHoleId(currIndex);
-                let pos = getCenterPos(stepId);
+                let isLocked = document.getElementById(stepId).classList.contains('locked-tile-visual');
+                if (isLocked) {
+                    let pos = getCenterPos(stepId);
+                    tl.to(hand, { x: pos.x, y: pos.y, duration: 0.35, ease: "power1.inOut" });
+                    continue;
+                }
 
+                let pos = getCenterPos(stepId);
                 tl.to(hand, { x: pos.x, y: pos.y, duration: 0.35, ease: "power1.inOut" });
 
                 if (currIndex !== targetIndex) {

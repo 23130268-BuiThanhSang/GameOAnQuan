@@ -27,8 +27,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         let holeElement = document.getElementById(holeId);
 
         if (holeElement) {
-            holeElement.addEventListener("click", () => {
-                GameController.handleTileClick(holeId);
+            holeElement.addEventListener("click", (event) => {
+                GameController.handleTileClick(holeId, event);
             });
         }
     }

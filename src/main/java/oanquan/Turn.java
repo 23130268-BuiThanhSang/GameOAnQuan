@@ -10,6 +10,7 @@ public class Turn {
     public int piecesInHand;
     public int currentTileIndex;
     public List<Integer> animationPath;
+    public double scoreMultiplier = 1.0;
     public Turn(Player player) {
         this.player = player;
         this.animationPath = new ArrayList<>();
