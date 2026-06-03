@@ -88,10 +88,17 @@ const GameController = {
         const responseData = await ApiClient.sendMove(startIndex, direction);
 
         if (!responseData || responseData.status === "error") {
+            if (responseData?.inShop) {
+                this.isAnimating = false;
+                ShopController.openShop(responseData);
+                return;
+            }
+
             alert(responseData?.message || "Nước đi không hợp lệ!");
             this.isAnimating = false;
             return;
         }
+
 
         const movingPlayerId = this.currentPlayerId;
         if (responseData && responseData.status === "game_complete") {
@@ -99,8 +106,9 @@ const GameController = {
         }
         const onTurnFinished = () => {
             BoardRender.renderFullState(responseData);
+
             GameController.currentPlayerId = responseData.currentPlayer;
-            GameController.isAnimating = false; // Mở khóa bàn cờ
+            GameController.isAnimating = false;
 
             if (responseData.fullTurnCount !== undefined) {
                 const turnDisplay = document.getElementById('current-turn-display');
@@ -109,11 +117,14 @@ const GameController = {
                 }
             }
 
-            if (responseData.inShop) {
+            if (responseData.inShop === true) {
                 setTimeout(() => {
                     ShopController.openShop(responseData);
                 }, 300);
+                return;
             }
+
+            GameController.isAnimating = false;
         };
 
         Animation.animateRaiQuan(
@@ -164,7 +175,7 @@ const GameController = {
                 document.getElementById('gameOverModal').style.display = 'flex';
 
                 const gameOverSound = new Audio('assets/sounds/win.mp3');
-                gameOverSound.play().catch(()=>{});
+                AudioController.play('gameOver');
             } else {
                 console.warn("Lỗi logic: Server không trả về game_complete", responseData);
             }
