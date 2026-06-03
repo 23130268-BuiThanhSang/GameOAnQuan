@@ -286,6 +286,16 @@ public class GameManager {
             board[targetIndex].lockedTurns = 3;
             return true;
         }
+        if ("STEAL_CARD".equals(skillId)) {
+            Player opponent = (p == player1) ? player2 : player1;
+            if (opponent.cardInventory.isEmpty()) {
+                return false;
+            }
+            int randomIndex = (int) (Math.random() * opponent.cardInventory.size());
+            String stolenCard = opponent.cardInventory.remove(randomIndex);
+            p.cardInventory.add(stolenCard);
+            return true;
+        }
         return false;
     }
 }

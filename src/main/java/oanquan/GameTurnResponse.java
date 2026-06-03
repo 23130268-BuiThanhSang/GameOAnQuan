@@ -11,6 +11,8 @@ public class GameTurnResponse {
     public List<String> animationPath;
     public String message;
     public Map<String, Integer> capturedCount;
+    public List<String> player1Cards;
+    public List<String> player2Cards;
 
     public String winner;
     public String scatterEvent;

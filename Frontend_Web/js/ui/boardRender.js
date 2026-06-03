@@ -122,6 +122,8 @@ const BoardRender = {
                 holeEl.insertAdjacentHTML('beforeend', `<div class="cooldown-badge">${tileData.lockedTurns}</div>`);
             }
         }
+        BoardRender.renderSkillTray(gameState.player1Cards,1);
+        BoardRender.renderSkillTray(gameState.player2Cards,2);
     },
     // HÀM MỚI 1: Bốc sạch ngọc ở ô bắt đầu
     clearHole(holeId) {
@@ -195,5 +197,20 @@ const BoardRender = {
             }
         }
     },
+    renderSkillTray(cards, playerId) {
+        const tray = document.getElementById(`skill-tray-p${playerId}`);
+        tray.innerHTML = '';
+        if (!cards || cards.length === 0) {
+            tray.innerHTML =
+                '<span class="empty-tray-text">Chưa có kỹ năng</span>';
+            return;
+        }
+        cards.forEach(cardId => {
+            ShopController.addCardToTray(
+                playerId,
+                cardId
+            );
+        });
+    }
 
 };
