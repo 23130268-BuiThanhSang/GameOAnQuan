@@ -2,6 +2,8 @@ package oanquan;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 public class CardStorage {
     public static List<Card> allCards() {
@@ -29,5 +31,25 @@ public class CardStorage {
             return new StealCard();
         }
         return null;
+    }
+
+    public static Card randomCardExcept(Set<String> excludedIds) {
+        List<Card> all = allCards();
+        List<Card> available = new ArrayList<>();
+
+        for (Card card : all) {
+            if (card != null && card.id != null && (excludedIds == null || !excludedIds.contains(card.id))) {
+                available.add(card);
+            }
+        }
+
+        if (available.isEmpty()) {
+            return null;
+        }
+
+        Random random = new Random();
+        Card selected = available.get(random.nextInt(available.size()));
+
+        return createById(selected.id);
     }
 }

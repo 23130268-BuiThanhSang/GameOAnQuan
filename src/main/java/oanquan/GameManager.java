@@ -1,8 +1,6 @@
 package oanquan;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class GameManager {
     public List<String> lastP1ShopCards = new ArrayList<>();
@@ -22,6 +20,8 @@ public class GameManager {
     public boolean p2ShopDone;
     public List<Card> p1ShopOptions = new ArrayList<>();
     public List<Card> p2ShopOptions = new ArrayList<>();
+    public Set<Integer> p1RerolledSlots = new HashSet<>();
+    public Set<Integer> p2RerolledSlots = new HashSet<>();
     public List<Integer> lastAnimationPath = new ArrayList<>();
     public String lastScatterEvent = null;
     public GameManager(String p1Name, String p2Name) {
@@ -268,6 +268,8 @@ public class GameManager {
         shopEventId++;
         p1ShopDone = false;
         p2ShopDone = false;
+        p1RerolledSlots.clear();
+        p2RerolledSlots.clear();
         p1ShopOptions = generateShopOptions(lastP1ShopCards, p1BoughtCards);
         p2ShopOptions = generateShopOptions(lastP2ShopCards, p2BoughtCards);
     }

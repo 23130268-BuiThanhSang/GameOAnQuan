@@ -283,4 +283,68 @@ public class GameController {
         fillGameState(response);
         return response;
     }
+
+    @PostMapping("/shop/reroll")
+    public GameTurnResponse rerollShopCard(@RequestBody Map<String, Integer> request) {
+        int playerId = request.get("playerId");
+        int cardIndex = request.get("cardIndex");
+
+        GameTurnResponse response = new GameTurnResponse();
+
+        if (!game.inShop) {
+            response.status = "error";
+            response.message = "Shop is not active.";
+            fillGameState(response);
+            return response;
+        }
+
+        if (cardIndex < 0 || cardIndex >= 3) {
+            response.status = "error";
+            response.message = "Invalid card index.";
+            fillGameState(response);
+            return response;
+        }
+
+        List<Card> options = (playerId == 1) ? game.p1ShopOptions : game.p2ShopOptions;
+        Set<Integer> rerolledSlots = (playerId == 1) ? game.p1RerolledSlots : game.p2RerolledSlots;
+
+        if (options == null || cardIndex >= options.size()) {
+            response.status = "error";
+            response.message = "Card not found.";
+            fillGameState(response);
+            return response;
+        }
+
+        if (rerolledSlots.contains(cardIndex)) {
+            response.status = "error";
+            response.message = "Thẻ này đã được đổi 1 lần rồi.";
+            fillGameState(response);
+            return response;
+        }
+
+        Set<String> excludedIds = new HashSet<>();
+
+        for (Card card : options) {
+            if (card != null && card.id != null) {
+                excludedIds.add(card.id);
+            }
+        }
+
+        Card newCard = CardStorage.randomCardExcept(excludedIds);
+
+        if (newCard == null) {
+            response.status = "error";
+            response.message = "Không còn thẻ khác để đổi.";
+            fillGameState(response);
+            return response;
+        }
+
+        options.set(cardIndex, newCard);
+        rerolledSlots.add(cardIndex);
+
+        response.status = "success";
+        response.message = "Đổi thẻ thành công.";
+        fillGameState(response);
+        return response;
+    }
 }

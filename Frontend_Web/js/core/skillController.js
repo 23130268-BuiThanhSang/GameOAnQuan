@@ -32,15 +32,20 @@ const SkillController = {
                 if (isInstantCast) {
                     try {
                         const responseData = await ApiClient.sendUseSkill(ownerId, cardId, -1);
+
                         if (!responseData || responseData.status === "error") {
                             alert(responseData?.message || "Lỗi khi dùng thẻ!");
                         } else {
-                            if (typeof AudioController !== 'undefined') AudioController.play('drop');
-                            alert("Kích hoạt thành công! Lượt này bạn sẽ được X2 điểm.");
+                            if (typeof AudioController !== 'undefined') {
+                                AudioController.play('drop');
+                            }
+
+                            BoardRender.renderFullState(responseData);
                         }
-                    } catch(e) {
+                    } catch (e) {
                         console.error(e);
                     }
+
                     GameController.isAnimating = false;
                 } else {
                     GameController.pendingSkillId = cardId;
