@@ -14,6 +14,6 @@ public class DoubleCaptureCard extends Card {
 
     @Override
     public void addCard(Player player) {
-        player.doubleScoreNextMove = true;
+        player.activeEffects.get(TriggerTime.BEFORE_CAPTURE).add(new DoubleScoreEffect());
     }
 }

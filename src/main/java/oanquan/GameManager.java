@@ -82,7 +82,7 @@ public class GameManager {
         executeHooks(TriggerTime.END_TURN, currentTurn);
         this.lastAnimationPath = currentTurn.animationPath;
 
-        currentPlayer.doubleScoreNextMove = false;
+        currentPlayer.activeEffects.get(TriggerTime.BEFORE_CAPTURE).removeIf(e -> e instanceof DoubleScoreEffect);
 
         switchTurn();
     }
@@ -106,9 +106,8 @@ public class GameManager {
 
             double captured = board[targetIndex].calcScore();
 
-            if (currentPlayer.doubleScoreNextMove) {
-                captured *= 2;
-            }
+            captured *= currentTurn.scoreMultiplier;
+
 
             int actualPieces = board[targetIndex].mandarinPieces + board[targetIndex].citizenPieces;
             board[targetIndex].pickUpPieces();
@@ -153,19 +152,19 @@ public class GameManager {
         }
         halfMoveCount++;
         if (halfMoveCount % 2 == 0) fullTurnCount++;
-        if (fullTurnCount > 0
-                && (fullTurnCount == 5 || fullTurnCount == 10 || fullTurnCount == 15)
-                && !inShop
-                && lastShopOpenedAtTurn != fullTurnCount) {
-
-            lastShopOpenedAtTurn = fullTurnCount;
-            openShop();
-        }
-        // Cho test nhanh shop
-//        if (fullTurnCount > 0 && !inShop && lastShopOpenedAtTurn != fullTurnCount) {
+//        if (fullTurnCount > 0
+//                && (fullTurnCount == 5 || fullTurnCount == 10 || fullTurnCount == 15)
+//                && !inShop
+//                && lastShopOpenedAtTurn != fullTurnCount) {
+//
 //            lastShopOpenedAtTurn = fullTurnCount;
 //            openShop();
 //        }
+        // Cho test nhanh shop
+        if (fullTurnCount > 0 && !inShop && lastShopOpenedAtTurn != fullTurnCount) {
+            lastShopOpenedAtTurn = fullTurnCount;
+            openShop();
+        }
     }
     private void checkAndScatterPieces() {
         int startIdx = (currentPlayer.playerId == 1) ? 0 : 6;
