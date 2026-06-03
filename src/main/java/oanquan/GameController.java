@@ -90,6 +90,8 @@ public class GameController {
         response.capturedCount = new HashMap<>();
         response.capturedCount.put("player1", game.player1.capturedCount);
         response.capturedCount.put("player2", game.player2.capturedCount);
+        response.player1Cards = new ArrayList<>(game.player1.cardInventory);
+        response.player2Cards = new ArrayList<>(game.player2.cardInventory);
 
         response.board = new HashMap<>();
         for (int i = 0; i < 12; i++) {

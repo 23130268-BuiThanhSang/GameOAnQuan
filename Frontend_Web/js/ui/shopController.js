@@ -115,7 +115,7 @@ const ShopController = {
         miniCard.style.backgroundImage = `url('assets/images/skills/${cardInfo.id}.png'), url('assets/images/skills/BONUS_SEED.png')`;
 
         // DOUBLE_CAPTURE mới cần bấm kích hoạt
-        if (cardId === 'DOUBLE_CAPTURE') {
+        if (cardId === 'DOUBLE_CAPTURE' || cardId === 'STEAL_CARD') {
             miniCard.innerHTML = `
                 <div class="mini-card-tooltip">
                     <div class="tooltip-title">${cardInfo.name}</div>
@@ -145,7 +145,7 @@ const ShopController = {
                 }
 
                 // DOUBLE_CAPTURE: gọi API để kích hoạt nhân đôi điểm lượt sau
-                if (cardInfo.id === 'DOUBLE_CAPTURE') {
+                if (cardInfo.id === 'DOUBLE_CAPTURE' || cardInfo.id === 'STEAL_CARD') {
                     ShopController.useCard(playerId, cardInfo.id, miniCard);
                     return;
                 }
@@ -163,11 +163,15 @@ const ShopController = {
         },
 
     useCard: async function(playerId, cardId, miniCardElement) {
-        if (cardId !== 'DOUBLE_CAPTURE') {
+        if (cardId !== 'DOUBLE_CAPTURE' && cardId !== 'STEAL_CARD') {
             return;
         }
 
-        const confirmUse = confirm("Bạn có muốn dùng thẻ Nhân đôi điểm không?");
+        const message = (cardId === 'STEAL_CARD')
+                ?"Đánh cắp ngẫu nhiên 1 thẻ đối thủ?"
+                :"Bạn có muốn dùng thẻ Nhân đôi điểm không?";
+
+        const confirmUse = confirm(message);
 
         if (!confirmUse) return;
 
@@ -188,7 +192,7 @@ const ShopController = {
                 return;
             }
 
-            alert("Đã kích hoạt thẻ Nhân đôi điểm! Lượt đi tiếp theo của bạn sẽ được nhân đôi điểm ăn được.");
+            alert(cardId === 'STEAL_CARD'?"Đã đánh cắp 1 thẻ của đối thủ!":"Đã kích hoạt thẻ Nhân đôi điểm!");
 
             if (miniCardElement) {
                 miniCardElement.remove();
