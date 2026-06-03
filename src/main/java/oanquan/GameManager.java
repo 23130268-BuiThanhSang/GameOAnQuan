@@ -1,9 +1,12 @@
 package oanquan;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GameManager {
+    public List<String> lastP1ShopCards = new ArrayList<>();
+    public List<String> lastP2ShopCards = new ArrayList<>();
     public Tile[] board;
     public Player player1;
     public Player player2;
@@ -213,23 +216,54 @@ public class GameManager {
         return totalPieces <= 5;
     }
 
+    private List<Card> generateShopOptions(List<String> lastShopHistory) {
+        List<Card> allCards = CardStorage.allCards();
+        List<Card> availableCards = new ArrayList<>();
+        for (Card c : allCards) {
+            if (!lastShopHistory.contains(c.id)) {
+                availableCards.add(c);
+            }
+        }
+        if (availableCards.isEmpty()) {
+            availableCards = new ArrayList<>(allCards);
+        }
+
+        Collections.shuffle(availableCards);
+
+        List<Card> options = new ArrayList<>();
+        for (int i = 0; i < Math.min(3, availableCards.size()); i++) {
+            options.add(availableCards.get(i));
+        }
+
+        lastShopHistory.clear();
+        for (Card c : options) {
+            lastShopHistory.add(c.id);
+        }
+
+        return options;
+    }
+
     private void openShop() {
         inShop = true;
         shopEventId++;
-
         p1ShopDone = false;
         p2ShopDone = false;
 
-        //cho ae len them card, h test bang bonusseed
-        List<Card> options = new ArrayList<>();
-        options.add(new BonusSeedCard());
-        options.add(new DoubleCaptureCard());
-        options.add(new BonusSeedCard());
-        p1ShopOptions = options;
-        List<Card> options2 = new ArrayList<>();
-        options2.add(new BonusSeedCard());
-        options2.add(new DoubleCaptureCard());
-        options2.add(new BonusSeedCard());
-        p2ShopOptions = options2;
+        p1ShopOptions = generateShopOptions(lastP1ShopCards);
+        p2ShopOptions = generateShopOptions(lastP2ShopCards);
+    }
+    public boolean useSkill(int playerId, String skillId, int targetIndex) {
+        Player p = (playerId == 1) ? player1 : player2;
+
+        if ("BONUS_SEED".equals(skillId)) {
+            board[targetIndex].citizenPieces++;
+            return true;
+        }
+        if ("DOUBLE_CAPTURE".equals(skillId)) {
+            p.activeEffects.get(TriggerTime.BEFORE_CAPTURE).add(new DoubleScoreEffect());
+            return true;
+        }
+
+        return false;
     }
 }

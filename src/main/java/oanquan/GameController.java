@@ -63,6 +63,7 @@ public class GameController {
 
         return response;
     }
+
     @PostMapping("/resign")
     public GameTurnResponse resignGame(@RequestBody Map<String, Integer> request) {
         int resigningPlayerId = request.get("playerId");
@@ -204,28 +205,7 @@ public class GameController {
             return response;
         }
 
-        // BONUS_SEED: mua là kích hoạt ngay, không cần bấm dùng thẻ
-        if ("BONUS_SEED".equals(cardId)) {
-            bought.addCard(buyer);
-        }
-        // DOUBLE_CAPTURE: mua xong đưa vào khay, người chơi phải bấm dùng sau
-        else if ("DOUBLE_CAPTURE".equals(cardId)) {
-            buyer.cardInventory.add(cardId);
-        }
-
-        // Sau khi mua xong, đánh dấu người chơi đã xử lý shop
-        if (playerId == 1) {
-            game.p1ShopDone = true;
-        } else {
-            game.p2ShopDone = true;
-        }
-
-        // Nếu cả 2 người chơi xong shop thì đóng shop
-        if (game.p1ShopDone && game.p2ShopDone) {
-            game.inShop = false;
-            game.p1ShopOptions = new ArrayList<>();
-            game.p2ShopOptions = new ArrayList<>();
-        }
+        buyer.cardInventory.add(cardId);
 
         response.status = "success";
         response.message = "Player " + playerId + " bought " + cardId + " for " + chosen.cost + " score.";
@@ -264,37 +244,32 @@ public class GameController {
     public GameTurnResponse useCard(@RequestBody Map<String, Object> request) {
         int playerId = (int) request.get("playerId");
         String cardId = (String) request.get("cardId");
+        int targetIndex = -1;
+        if (request.get("targetIndex") != null) {
+            targetIndex = (int) request.get("targetIndex");
+        }
 
         GameTurnResponse response = new GameTurnResponse();
-
         Player player = (playerId == 1) ? game.player1 : game.player2;
-
         if (!player.cardInventory.contains(cardId)) {
             response.status = "error";
-            response.message = "Player does not own this card.";
+            response.message = "Bạn không sở hữu thẻ kỹ năng này!";
             fillGameState(response);
             return response;
         }
+        boolean isSuccess = game.useSkill(playerId, cardId, targetIndex);
 
-        Card card = CardStorage.createById(cardId);
+        if (isSuccess) {
+            player.cardInventory.remove(cardId);
 
-        if (card == null) {
+            response.status = "success";
+            response.message = "Kích hoạt kỹ năng " + cardId + " thành công!";
+        } else {
             response.status = "error";
-            response.message = "Unknown card id.";
-            fillGameState(response);
-            return response;
+            response.message = "Không thể sử dụng thẻ này vào lúc này!";
         }
 
-        // Kích hoạt hiệu ứng của thẻ
-        card.addCard(player);
-
-        // Dùng xong thì xóa thẻ khỏi kho
-        player.cardInventory.remove(cardId);
-
-        response.status = "success";
-        response.message = "Player " + playerId + " used card " + cardId + ".";
         fillGameState(response);
         return response;
     }
-    
 }
