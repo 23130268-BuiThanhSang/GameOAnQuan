@@ -9,35 +9,64 @@ const MenuController = {
     init() {
         const savedP1 = localStorage.getItem('oanquan_p1') || "";
         const savedP2 = localStorage.getItem('oanquan_p2') || "";
-        const savedAudio = localStorage.getItem('oanquan_audio');
-        this.isAudioEnabled = savedAudio === 'true';
+        // Giữ cách check localStorage an toàn của bạn A
+        this.isAudioEnabled = localStorage.getItem('oanquan_audio') !== 'false';
 
         document.getElementById('p1NameInput').value = savedP1;
         document.getElementById('p2NameInput').value = savedP2;
+
+        // Giữ kiểm tra an toàn và khởi tạo AudioController của bạn A
+        if (typeof AudioController !== 'undefined') {
+            AudioController.init();
+            AudioController.setEnabled(this.isAudioEnabled);
+        }
+
         this.updateAudioButton();
     },
 
     updateAudioButton() {
+        // Cập nhật cả nút ngoài Menu và nút trong Game của bạn A
         const btn = document.getElementById('btnToggleAudio');
-        btn.innerText = `ÂM THANH: ${this.isAudioEnabled ? 'BẬT 🔊' : 'TẮT 🔇'}`;
+        if (btn) {
+            btn.innerText = `ÂM THANH: ${this.isAudioEnabled ? 'BẬT 🔊' : 'TẮT 🔇'}`;
+        }
+
+        const gameBtn = document.getElementById('btnToggleAudioGame');
+        if (gameBtn) {
+            gameBtn.innerHTML = this.isAudioEnabled
+                ? '<i class="fa-solid fa-volume-high"></i>'
+                : '<i class="fa-solid fa-volume-xmark"></i>';
+            gameBtn.title = `ÂM THANH: ${this.isAudioEnabled ? 'BẬT' : 'TẮT'}`;
+        }
     },
 
     toggleAudio() {
         this.isAudioEnabled = !this.isAudioEnabled;
         localStorage.setItem('oanquan_audio', this.isAudioEnabled);
-        if(this.isAudioEnabled){
-            AudioController.playBgm("menu");
-        }
-        else{
-            if(AudioController.currentBgm){
-                AudioController.currentBgm.pause();
+
+        if (typeof AudioController !== 'undefined') {
+            // Cập nhật trạng thái tổng
+            AudioController.setEnabled(this.isAudioEnabled);
+
+            // Kết hợp logic bật/tắt nhạc tức thời của bạn B
+            if (this.isAudioEnabled) {
+                // Kiểm tra xem đang ở Menu hay trong Game để bật đúng nhạc
+                const gameScreen = document.getElementById('game-screen');
+                const isInGame = gameScreen && gameScreen.style.display === 'flex';
+                AudioController.playBgm(isInGame ? "battle" : "menu");
+            } else {
+                if (AudioController.currentBgm) {
+                    AudioController.currentBgm.pause();
+                }
             }
         }
+
         this.updateAudioButton();
     },
 
     startGame() {
-        if (this.isAudioEnabled) {
+        // Logic bật nhạc battle của bạn B (đã bọc thêm check an toàn)
+        if (this.isAudioEnabled && typeof AudioController !== 'undefined') {
             AudioController.playBgm("battle");
         }
 
@@ -67,9 +96,10 @@ const MenuController = {
     backToMenu() {
         if(!confirm("Bạn muốn thoát ra Menu chính?")) return;
 
-        AudioController.playBgm(
-            "menu"
-        );
+        // Logic đổi về nhạc menu của bạn B (đã bọc thêm check an toàn)
+        if (this.isAudioEnabled && typeof AudioController !== 'undefined') {
+            AudioController.playBgm("menu");
+        }
 
         const menu = document.getElementById('menu-screen');
         const game = document.getElementById('game-screen');

@@ -158,6 +158,7 @@ public class GameController {
             fillGameState(response);
             return response;
         }
+
         if (playerId == 2 && game.p2ShopDone) {
             response.status = "error";
             response.message = "Player 2 already resolved shop.";
@@ -194,20 +195,32 @@ public class GameController {
 
         buyer.score -= chosen.cost;
 
-        Card bought;
-        if ("BONUS_SEED".equals(cardId)) bought = new BonusSeedCard();
-        else {
+        Card bought = CardStorage.createById(cardId);
+
+        if (bought == null) {
             response.status = "error";
             response.message = "Unknown card id.";
             fillGameState(response);
             return response;
         }
 
-        bought.addCard(buyer);
+        // BONUS_SEED: mua là kích hoạt ngay, không cần bấm dùng thẻ
+        if ("BONUS_SEED".equals(cardId)) {
+            bought.addCard(buyer);
+        }
+        // DOUBLE_CAPTURE: mua xong đưa vào khay, người chơi phải bấm dùng sau
+        else if ("DOUBLE_CAPTURE".equals(cardId)) {
+            buyer.cardInventory.add(cardId);
+        }
 
-        if (playerId == 1) game.p1ShopDone = true;
-        else game.p2ShopDone = true;
+        // Sau khi mua xong, đánh dấu người chơi đã xử lý shop
+        if (playerId == 1) {
+            game.p1ShopDone = true;
+        } else {
+            game.p2ShopDone = true;
+        }
 
+        // Nếu cả 2 người chơi xong shop thì đóng shop
         if (game.p1ShopDone && game.p2ShopDone) {
             game.inShop = false;
             game.p1ShopOptions = new ArrayList<>();
@@ -243,6 +256,43 @@ public class GameController {
 
         response.status = "success";
         response.message = "Player " + playerId + " skipped shop.";
+        fillGameState(response);
+        return response;
+    }
+
+    @PostMapping("/card/use")
+    public GameTurnResponse useCard(@RequestBody Map<String, Object> request) {
+        int playerId = (int) request.get("playerId");
+        String cardId = (String) request.get("cardId");
+
+        GameTurnResponse response = new GameTurnResponse();
+
+        Player player = (playerId == 1) ? game.player1 : game.player2;
+
+        if (!player.cardInventory.contains(cardId)) {
+            response.status = "error";
+            response.message = "Player does not own this card.";
+            fillGameState(response);
+            return response;
+        }
+
+        Card card = CardStorage.createById(cardId);
+
+        if (card == null) {
+            response.status = "error";
+            response.message = "Unknown card id.";
+            fillGameState(response);
+            return response;
+        }
+
+        // Kích hoạt hiệu ứng của thẻ
+        card.addCard(player);
+
+        // Dùng xong thì xóa thẻ khỏi kho
+        player.cardInventory.remove(cardId);
+
+        response.status = "success";
+        response.message = "Player " + playerId + " used card " + cardId + ".";
         fillGameState(response);
         return response;
     }

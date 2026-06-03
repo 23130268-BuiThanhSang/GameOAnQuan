@@ -45,7 +45,7 @@ const Animation = {
         tl.to(hand, { opacity: 1, duration: 0.2 });
         tl.to(hand, { scale: 0.8, duration: 0.15, yoyo: true, repeat: 1 });
         tl.call(() => {
-            pickupSound.currentTime = 0; pickupSound.play().catch(()=>{});
+            AudioController.play('capture');
             BoardRender.clearHole(startHoleId);
             virtualBoard[startHoleId] = 0;
         });
@@ -78,7 +78,7 @@ const Animation = {
                         virtualBoard[stepId]++;
                         tl.to(hand, { y: "+=15", duration: 0.12, yoyo: true, repeat: 1 });
                         tl.call(() => {
-                            dropSound.currentTime = 0; dropSound.play().catch(()=>{});
+                            AudioController.play('drop');
                             this.spawnRippleVFX(document.getElementById(stepId));
                             BoardRender.incrementHole(stepId);
                         });
@@ -134,7 +134,7 @@ const Animation = {
                 }
                 document.getElementById('gameOverModal').style.display = 'flex';
                 gameOverSound.currentTime = 0;
-                gameOverSound.play().catch(()=>{});
+                AudioController.play('gameOver');
             });
         }
 
@@ -186,7 +186,7 @@ const Animation = {
                 tl.to(hand, { y: "+=15", duration: 0.1, yoyo: true, repeat: 1 });
                 tl.call(() => {
                     dropSound.currentTime = 0;
-                    dropSound.play().catch(()=>{});
+                    AudioController.play('drop');
                     this.spawnRippleVFX(holeDOM);
 
                     BoardRender.incrementHole(holeId);
