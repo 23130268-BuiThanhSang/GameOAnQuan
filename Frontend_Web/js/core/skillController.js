@@ -89,7 +89,7 @@ const SkillController = {
         const flyingCard = document.getElementById('flying-card');
         const slogan = document.getElementById('skill-slogan');
 
-// ✅ FIX 1: reset trạng thái flyingCard trước mỗi animation
+        // reset trạng thái flyingCard trước mỗi animation
         gsap.killTweensOf(flyingCard);
         gsap.set(flyingCard, {scale: 1, opacity: 1, rotation: 0, rotationY: 0});
 
@@ -126,7 +126,7 @@ const SkillController = {
                     GameController.pendingSkillId = cardId;
                     SkillController.highlightTargets(cardId, ownerId);
 
-                    // ⚠️ (khuyến nghị) mở lock để dùng tiếp
+
                     GameController.isAnimating = false;
 
                     console.log(`[Mock] Đã tung chiêu! Đợi click vào ô để áp dụng ${cardId}...`);
