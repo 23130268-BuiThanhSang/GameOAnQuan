@@ -11,6 +11,9 @@ const ShopController = {
     shopDataP1: [],
     shopDataP2: [],
 
+    rerolledP1: [],
+    rerolledP2: [],
+
     openShop: function(data) {
         this.currentShopTurn = 1;
         this.selectedCardsP1 = [];
@@ -18,6 +21,9 @@ const ShopController = {
 
         this.shopDataP1 = data.p1ShopOptions || [];
         this.shopDataP2 = data.p2ShopOptions || [];
+
+         this.rerolledP1 = [];
+         this.rerolledP2 = [];
 
         document.getElementById('shopModal').style.display = 'flex';
 
@@ -30,29 +36,95 @@ const ShopController = {
         this.updateTurnUI();
     },
 
-    renderCards: function(playerId, options) {
-        const container = document.getElementById(`cards-container-p${playerId}`);
-        container.innerHTML = '';
-        if (options) {
-            options.forEach(card => {
-                container.innerHTML += `
-                    <div class="card-wrapper">
-                        <div class="card-item" onclick="ShopController.toggleCard(this, ${playerId}, '${card.id}', ${card.cost})">
-                            <img src="assets/images/skills/${card.id}.png" alt="${card.name}" style="width: 100%; height: 40%; object-fit: cover; border-bottom: 2px solid #deb887; object-position: top;">
-                            <div class="card-info">
-                                <p class="card-name">${card.name}</p>
-                                <p class="card-desc">${card.description}</p>
-                                <b class="card-price">${card.cost} Điểm</b>
-                            </div>
-                        </div>
-                        <button class="btn-reroll" onclick="ShopController.rerollCard(${playerId}, '${card.id}')" title="Đổi thẻ này (1 lần)">
-                            <i class="fa-solid fa-rotate-right"></i>
-                        </button>
+renderCards: function(playerId, options) {
+    const container = document.getElementById(`cards-container-p${playerId}`);
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (!options || options.length === 0) {
+        container.innerHTML = `<p style="color:#8b4513; font-weight:bold;">Không có thẻ để hiển thị</p>`;
+        return;
+    }
+
+    options.forEach((card, index) => {
+        const rerolledList = (playerId === 1) ? this.rerolledP1 : this.rerolledP2;
+        const alreadyRerolled = !!rerolledList[index];
+
+        container.innerHTML += `
+            <div class="card-wrapper">
+                <div class="card-item" onclick="ShopController.toggleCard(this, ${playerId}, '${card.id}', ${card.cost})">
+                    <img src="assets/images/skills/${card.id}.png"
+                         onerror="this.src='assets/images/skills/BONUS_SEED.png'"
+                         alt="${card.name}"
+                         style="width: 100%; height: 40%; object-fit: cover; border-bottom: 2px solid #deb887; object-position: top;">
+                    <div class="card-info">
+                        <p class="card-name">${card.name}</p>
+                        <p class="card-desc">${card.description}</p>
+                        <b class="card-price">${card.cost} Điểm</b>
                     </div>
-                `;
-            });
+                </div>
+
+                <button class="btn-reroll ${alreadyRerolled ? 'rerolled' : ''}"
+                        ${alreadyRerolled ? 'disabled' : ''}
+                        onclick="event.stopPropagation(); ShopController.rerollCard(${playerId}, ${index})"
+                        title="Đổi thẻ này, chỉ 1 lần">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+            </div>
+        `;
+    });
+},
+
+rerollCard: async function(playerId, cardIndex) {
+    if (playerId !== this.currentShopTurn) {
+        alert(`Đang là lượt của Player ${this.currentShopTurn}, không được đổi thẻ của người khác!`);
+        return;
+    }
+
+    const rerolledList = (playerId === 1) ? this.rerolledP1 : this.rerolledP2;
+
+    if (rerolledList[cardIndex]) {
+        alert("Thẻ này đã đổi 1 lần rồi!");
+        return;
+    }
+
+    try {
+        const response = await fetch('http://localhost:8080/api/game/shop/reroll', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                playerId: playerId,
+                cardIndex: cardIndex
+            })
+        });
+
+        const data = await response.json();
+
+        if (!data || data.status === 'error') {
+            alert(data?.message || "Không thể đổi thẻ!");
+            return;
         }
-    },
+
+        this.shopDataP1 = data.p1ShopOptions || this.shopDataP1;
+        this.shopDataP2 = data.p2ShopOptions || this.shopDataP2;
+
+        rerolledList[cardIndex] = true;
+
+        if (playerId === 1) {
+            this.selectedCardsP1 = [];
+        } else {
+            this.selectedCardsP2 = [];
+        }
+
+        this.renderCards(1, this.shopDataP1);
+        this.renderCards(2, this.shopDataP2);
+
+    } catch (error) {
+        console.error("Lỗi reroll:", error);
+        alert("Không thể kết nối backend để đổi thẻ!");
+    }
+},
 
     updateTurnUI: function() {
         const title = document.getElementById('shop-turn-title');
@@ -91,13 +163,55 @@ const ShopController = {
         }
     },
 
-    rerollCard: function(playerId, cardId) {
-        if (playerId !== this.currentShopTurn) {
-            alert(`Đang là lượt của Player ${this.currentShopTurn}, bạn không được phá bài người ta!`);
+rerollCard: async function(playerId, cardIndex) {
+    if (playerId !== this.currentShopTurn) {
+        alert(`Đang là lượt của Player ${this.currentShopTurn}, không được đổi thẻ của người khác!`);
+        return;
+    }
+
+    const rerolledList = (playerId === 1) ? this.rerolledP1 : this.rerolledP2;
+
+    if (rerolledList[cardIndex]) {
+        alert("Thẻ này đã đổi 1 lần rồi!");
+        return;
+    }
+
+    try {
+        const response = await fetch('http://localhost:8080/api/game/shop/reroll', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                playerId: playerId,
+                cardIndex: cardIndex
+            })
+        });
+
+        const data = await response.json();
+
+        if (!data || data.status === 'error') {
+            alert(data?.message || "Không thể đổi thẻ!");
             return;
         }
-        alert(`Sẽ gọi API đổi thẻ [${cardId}] thành thẻ mới ở đây!`);
-    },
+
+        this.shopDataP1 = data.p1ShopOptions || this.shopDataP1;
+        this.shopDataP2 = data.p2ShopOptions || this.shopDataP2;
+
+        rerolledList[cardIndex] = true;
+
+        if (playerId === 1) {
+            this.selectedCardsP1 = [];
+        } else {
+            this.selectedCardsP2 = [];
+        }
+
+        this.renderCards(1, this.shopDataP1);
+        this.renderCards(2, this.shopDataP2);
+
+    } catch (error) {
+        console.error("Lỗi reroll:", error);
+        alert("Không thể kết nối backend để đổi thẻ!");
+    }
+},
 
 
     addCardToTray: function(playerId, cardId) {
@@ -114,53 +228,44 @@ const ShopController = {
         miniCard.className = 'mini-card';
         miniCard.style.backgroundImage = `url('assets/images/skills/${cardInfo.id}.png'), url('assets/images/skills/BONUS_SEED.png')`;
 
-        // DOUBLE_CAPTURE mới cần bấm kích hoạt
-        if (cardId === 'DOUBLE_CAPTURE' || cardId === 'STEAL_CARD') {
-            miniCard.innerHTML = `
-                <div class="mini-card-tooltip">
-                    <div class="tooltip-title">${cardInfo.name}</div>
-                    <div class="tooltip-desc">${cardInfo.description}</div>
-                    <div class="tooltip-desc"><b>Bấm để kích hoạt</b></div>
-                </div>
-            `;
+        miniCard.innerHTML = `
+            <div class="mini-card-tooltip">
+                <div class="tooltip-title">${cardInfo.name}</div>
+                <div class="tooltip-desc">${cardInfo.description}</div>
+                <div class="tooltip-desc"><b>Bấm để kích hoạt</b></div>
+            </div>
+        `;
 
-            miniCard.onclick = () => {
-                ShopController.useCard(playerId, cardId, miniCard);
-            };
-        }
-        // BONUS_SEED chỉ hiển thị trong khay, không click dùng
-        else {
-            miniCard.innerHTML = `
-                <div class="mini-card-tooltip">
-                    <div class="tooltip-title">${cardInfo.name}</div>
-                    <div class="tooltip-desc">${cardInfo.description}</div>
-                </div>
-            `;
-        }
+        miniCard.onclick = () => {
+            if (GameController.currentPlayerId !== playerId) {
+                alert("Chưa tới lượt, không được xài ké thẻ của người khác!");
+                return;
+            }
 
-            miniCard.onclick = () => {
-                if (GameController.currentPlayerId !== playerId) {
-                    alert("Chưa tới lượt, không được xài ké thẻ của người khác!");
-                    return;
-                }
+            if (cardInfo.id === 'DOUBLE_CAPTURE') {
+                SkillController.activateSkill(
+                    miniCard,
+                    cardInfo.id,
+                    "Ăn một thành hai, lợi thế nhân đôi!"
+                );
+                return;
+            }
 
-                // DOUBLE_CAPTURE: gọi API để kích hoạt nhân đôi điểm lượt sau
-                if (cardInfo.id === 'DOUBLE_CAPTURE' || cardInfo.id === 'STEAL_CARD') {
-                    ShopController.useCard(playerId, cardInfo.id, miniCard);
-                    return;
-                }
+            if (cardInfo.id === 'STEAL_CARD') {
+                ShopController.useCard(playerId, cardInfo.id, miniCard);
+                return;
+            }
 
+            let slogan = "Nhân phẩm bùng nổ!!!";
+            if (cardInfo.id === 'LOCK_TILE') {
+                slogan = "Lệnh cấm vận! Nông dân đình công!";
+            }
 
-                let slogan = "Nhân phẩm bùng nổ!!!";
-                if (cardInfo.id === 'LOCK_TILE') {
-                    slogan = "Lệnh cấm vận! Nông dân đình công!";
-                }
+            SkillController.activateSkill(miniCard, cardInfo.id, slogan);
+        };
 
-                SkillController.activateSkill(miniCard, cardInfo.id, slogan);
-            };
-
-            tray.appendChild(miniCard);
-        },
+        tray.appendChild(miniCard);
+    },
 
     useCard: async function(playerId, cardId, miniCardElement) {
         if (cardId !== 'DOUBLE_CAPTURE' && cardId !== 'STEAL_CARD') {
