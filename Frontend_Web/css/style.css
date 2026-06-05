@@ -369,6 +369,7 @@ body::before {
    UI CỬA HÀNG NÂNG CẤP (SHOP MODAL)
 ========================================= */
 .shop-modal-content {
+    position: relative;
     max-width: 850px !important;
     width: 95%;
     max-height: 90vh; /* Giới hạn chiều cao tối đa bằng 90% màn hình */
@@ -828,4 +829,40 @@ body::before {
     transform: none !important;
     background: #ddd;
     color: #777;
+}
+.shop-timer {
+    position: absolute;
+    top: 22px;
+    right: 30px;
+
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+
+    background: #fff3cd;
+    border: 3px solid #9b4f16;
+    color: #b22222;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 1.7rem;
+    font-weight: bold;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+}
+
+.timer-warning {
+    color: #ffffff !important;
+    background: #b22222 !important;
+    animation: timerPulse 0.6s infinite alternate;
+}
+
+@keyframes timerPulse {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.08);
+    }
 }

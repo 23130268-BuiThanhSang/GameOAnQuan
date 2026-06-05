@@ -8,6 +8,10 @@ const ShopController = {
     selectedCardsP1: [],
     selectedCardsP2: [],
 
+    shopTimeLimit: 10,
+    shopTimeLeft: 10,
+    shopTimerInterval: null,
+
     shopDataP1: [],
     shopDataP2: [],
 
@@ -34,6 +38,7 @@ const ShopController = {
         this.renderCards(2, this.shopDataP2);
 
         this.updateTurnUI();
+        this.startShopTimer();
     },
 
 renderCards: function(playerId, options) {
@@ -311,8 +316,92 @@ rerollCard: async function(playerId, cardIndex) {
         }
     },
 
+    startShopTimer: function() {
+        this.stopShopTimer();
+
+        this.shopTimeLeft = this.shopTimeLimit;
+        this.updateShopTimerUI();
+
+        this.shopTimerInterval = setInterval(() => {
+            this.shopTimeLeft--;
+            this.updateShopTimerUI();
+
+            if (this.shopTimeLeft <= 0) {
+                this.stopShopTimer();
+                this.skipShopByTimer();
+            }
+        }, 1000);
+    },
+
+    stopShopTimer: function() {
+        if (this.shopTimerInterval) {
+            clearInterval(this.shopTimerInterval);
+            this.shopTimerInterval = null;
+        }
+    },
+
+    updateShopTimerUI: function() {
+        const timer = document.getElementById('shop-timer');
+        if (!timer) return;
+
+        timer.innerText = this.shopTimeLeft;
+
+        if (this.shopTimeLeft <= 5) {
+            timer.classList.add('timer-warning');
+        } else {
+            timer.classList.remove('timer-warning');
+        }
+    },
+
+    skipShopByTimer: async function() {
+        const playerId = this.currentShopTurn;
+
+        try {
+            const response = await fetch('http://localhost:8080/api/game/shop/skip', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    playerId: playerId
+                })
+            });
+
+            const data = await response.json();
+
+            if (!data || data.status === 'error') {
+                alert(data?.message || `Player ${playerId} hết giờ nhưng không thể bỏ lượt shop!`);
+                return;
+            }
+
+            // Nếu Player 1 hết giờ thì chuyển sang Player 2
+            if (playerId === 1 && data.inShop) {
+                this.currentShopTurn = 2;
+                this.updateTurnUI();
+                this.startShopTimer();
+                return;
+            }
+
+            // Nếu Player 2 hết giờ thì đóng shop và tiếp tục game
+            if (!data.inShop) {
+                this.stopShopTimer();
+
+                const modal = document.getElementById('shopModal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+
+                BoardRender.renderFullState(data);
+                GameController.currentPlayerId = data.currentPlayer;
+                GameController.isAnimating = false;
+            }
+
+        } catch (error) {
+            console.error("Lỗi auto skip shop:", error);
+            alert("Không thể kết nối backend để bỏ lượt shop!");
+        }
+    },
 
     confirmSelection: async function() {
+        this.stopShopTimer();
         const playerId = this.currentShopTurn;
         const selectedList = (playerId === 1) ? this.selectedCardsP1 : this.selectedCardsP2;
         let finalGameState = null;
@@ -348,6 +437,7 @@ rerollCard: async function(playerId, cardIndex) {
         if (this.currentShopTurn === 1) {
             this.currentShopTurn = 2;
             this.updateTurnUI();
+            this.startShopTimer();
         } else {
             document.getElementById('shopModal').style.display = 'none';
             console.log("Cả hai đã chọn xong, game tiếp tục!");
