@@ -13,6 +13,7 @@ public class CardStorage {
         cards.add(new DoubleCaptureCard());
         cards.add(new LockTileCard());
         cards.add(new StealCard());
+        cards.add(new SeizeCommandCard());
         cards.add(new RemoveHighestCard());
         return cards;
     }
@@ -31,6 +32,8 @@ public class CardStorage {
         if ("STEAL_CARD".equals(id)) {
             return new StealCard();
         }
+        if ("SEIZE_COMMAND".equals(id)) {
+            return new SeizeCommandCard();
         if ("REMOVE_HIGHEST_CARD".equals(id)) {
             return new RemoveHighestCard();
         }

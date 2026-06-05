@@ -76,8 +76,16 @@ const SkillController = {
      * @param playerId
      */
     activateSkill: function(cardElement, cardId, sloganText) {
+
         const ownerId = cardElement.closest('#skill-tray-p1') ? 1 : 2;
-        if (ownerId !== GameController.currentPlayerId) {
+
+
+        // if (ownerId !== GameController.currentPlayerId) {
+        //     alert("Chưa tới lượt của bạn, cất tay đi!");
+        //     return;
+        // }
+
+        if (cardId !== 'SEIZE_COMMAND' && ownerId !== GameController.currentPlayerId) {
             alert("Chưa tới lượt của bạn, cất tay đi!");
             return;
         }
@@ -97,7 +105,7 @@ const SkillController = {
         slogan.innerText = sloganText;
 
         gsap.set(overlay, {autoAlpha: 1});
-        const isInstantCast = (cardId === 'DOUBLE_CAPTURE' ||
+        const isInstantCast = (cardId === 'DOUBLE_CAPTURE' || cardId === 'SEIZE_COMMAND'||
             cardId==="STEAL_CARD"|| cardId==="REMOVE_HIGHEST_CARD");
 
         const tl = gsap.timeline({
@@ -105,9 +113,47 @@ const SkillController = {
                 gsap.to(overlay, {autoAlpha: 0, duration: 0.3});
                 cardElement.remove();
 
+                // if (isInstantCast) {
+                //     try {
+                //         const responseData = await ApiClient.sendUseSkill(ownerId, cardId, -1);
+                //
+                //         if (!responseData || responseData.status === "error") {
+                //             alert(responseData?.message || "Lỗi khi dùng thẻ!");
+                //         } else {
+                //             if (typeof AudioController !== 'undefined') {
+                //                 AudioController.play('drop');
+                //             }
+                //
+                //             BoardRender.renderFullState(responseData);
+                //         }
+                //     } catch (e) {
+                //         console.error(e);
+                //     }
+                //
+                //     GameController.isAnimating = false;
+                //
+                /**
+                 * add animation for SEIZE_COMMAND and DOUBLE_CAPTURE here, because these 2 skills are instant cast and don't require target selection, we will directly call API to apply skill effect and show animation on the target hole (if any) after the flying card animation is done. For other skills, we will highlight the targetable holes and wait for player to click on the target hole to apply the skill effect.
+                 */
                 if (isInstantCast) {
                     try {
-                        const responseData = await ApiClient.sendUseSkill(ownerId, cardId, -1);
+                        let responseData;
+
+                        if (cardId === 'SEIZE_COMMAND') {
+                            // SEIZE_COMMAND dùng endpoint khác
+                            const response = await fetch('http://localhost:8080/api/game/card/use', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    playerId: ownerId,
+                                    cardId: cardId
+                                })
+                            });
+                            responseData = await response.json();
+                        } else {
+                            // DOUBLE_CAPTURE dùng endpoint cũ
+                            responseData = await ApiClient.sendUseSkill(ownerId, cardId, -1);
+                        }
 
                         if (!responseData || responseData.status === "error") {
                             alert(responseData?.message || "Lỗi khi dùng thẻ!");

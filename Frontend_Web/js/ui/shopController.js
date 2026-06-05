@@ -235,6 +235,7 @@ rerollCard: async function(playerId, cardIndex) {
                 'DOUBLE_CAPTURE': { id: 'DOUBLE_CAPTURE', name: 'Nhân Đôi', description: 'Nhân đôi số quân ăn được' },
                 'LOCK_TILE': { id: 'LOCK_TILE', name: 'Cấm Vận', description: 'Khóa 1 ô của đối thủ trong 3 lượt' },
                 'STEAL_CARD': { id: 'STEAL_CARD', name: 'Đạo Tặc', description: 'Đánh cắp ngẫu nhiên 1 thẻ của đối thủ' },
+                'SEIZE_COMMAND': {id: 'SEIZE_COMMAND', name: 'Cướp Lượt', description: 'Giành quyền đi ngay lập tức'}
                 'REMOVE_HIGHEST_CARD': {id:'REMOVE_HIGHEST_CARD', name:'Loại bỏ Bài', description:'Xóa thẻ giá cao nhất của đối thủ'
                 }
             };
@@ -262,6 +263,18 @@ rerollCard: async function(playerId, cardIndex) {
         `;
 
         miniCard.onclick = () => {
+            // // SEIZE_COMMAND có thể dùng bất kỳ lúc nào, không cần check lượt
+            // if (cardInfo.id === 'SEIZE_COMMAND') {
+            //     const confirmUse = confirm("Cướp lượt của đối thủ ngay bây giờ?");
+            //     if (!confirmUse) return;
+            //     ShopController.useCard(playerId, cardInfo.id, miniCard);
+            //     return;
+            // }
+            if (cardInfo.id === 'SEIZE_COMMAND') {
+                SkillController.activateSkill(miniCard, cardInfo.id, "Cướp lượt thành công!");
+                return;
+            }
+
             if (GameController.currentPlayerId !== playerId) {
                 alert("Chưa tới lượt, không được xài ké thẻ của người khác!");
                 return;
@@ -305,6 +318,15 @@ rerollCard: async function(playerId, cardIndex) {
     },
 
     useCard: async function(playerId, cardId, miniCardElement) {
+        if (cardId !== 'DOUBLE_CAPTURE' && cardId !== 'STEAL_CARD' && cardId !== 'SEIZE_COMMAND') {
+            return;
+        }
+
+        const message = (cardId === 'STEAL_CARD')
+                ?"Đánh cắp ngẫu nhiên 1 thẻ đối thủ?" :
+                (cardId === 'SEIZE_COMMAND')
+                ? "Cướp lượt ngay lập tức ?":
+            "Bạn có muốn dùng thẻ Nhân đôi điểm không?";
         let message="Kích hoạt thẻ?";
 
         if(cardId==="DOUBLE_CAPTURE")
@@ -337,6 +359,11 @@ rerollCard: async function(playerId, cardIndex) {
                 return;
             }
 
+            alert(
+                cardId === 'STEAL_CARD' ? "Đã đánh cắp 1 thẻ của đối thủ!" :
+                    cardId === 'SEIZE_COMMAND' ? "Bạn đã cướp lượt thành công!" :
+                        "Đã kích hoạt thẻ Nhân đôi điểm!"
+            );
             let success="Đã kích hoạt thẻ!";
 
             if(cardId==="DOUBLE_CAPTURE")
