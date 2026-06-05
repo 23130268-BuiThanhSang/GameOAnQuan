@@ -95,6 +95,7 @@ rerollCard: async function(playerId, cardIndex) {
     }
 
     try {
+
         const response = await fetch('http://localhost:8080/api/game/shop/reroll', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -274,7 +275,11 @@ rerollCard: async function(playerId, cardIndex) {
             }
 
             if (cardInfo.id === 'STEAL_CARD') {
-                ShopController.useCard(playerId, cardInfo.id, miniCard);
+                SkillController.activateSkill(
+                    miniCard,
+                    cardInfo.id,
+                    "Không ai cấm trộm cắp cả!"
+                );
                 return;
             }
 

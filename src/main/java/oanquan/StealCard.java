@@ -6,7 +6,7 @@ public class StealCard extends Card {
         super(
                 "STEAL_CARD",
                 "Steal Card",
-                "Steal 1 random card from opponent.",
+                "Đánh cắp 1 thẻ ngẫu nhiên của đối thủ.",
                 7,
                 new StealCardEffect()
         );
