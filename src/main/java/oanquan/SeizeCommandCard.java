@@ -5,7 +5,7 @@ public class SeizeCommandCard extends Card{
             super(
                     "SEIZE_COMMAND",
                     "Seize Command",
-                    "Seize the command and claim the right to act before all others.",
+                    "Cướp lấy lượt của đối thủ.",
                     9,
                         null
 //                    new SeizeCommandEffect()

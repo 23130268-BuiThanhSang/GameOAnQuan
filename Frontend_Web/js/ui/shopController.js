@@ -260,14 +260,17 @@ rerollCard: async function(playerId, cardIndex) {
         `;
 
         miniCard.onclick = () => {
-            // SEIZE_COMMAND có thể dùng bất kỳ lúc nào, không cần check lượt
+            // // SEIZE_COMMAND có thể dùng bất kỳ lúc nào, không cần check lượt
+            // if (cardInfo.id === 'SEIZE_COMMAND') {
+            //     const confirmUse = confirm("Cướp lượt của đối thủ ngay bây giờ?");
+            //     if (!confirmUse) return;
+            //     ShopController.useCard(playerId, cardInfo.id, miniCard);
+            //     return;
+            // }
             if (cardInfo.id === 'SEIZE_COMMAND') {
-                const confirmUse = confirm("Cướp lượt của đối thủ ngay bây giờ?");
-                if (!confirmUse) return;
-                ShopController.useCard(playerId, cardInfo.id, miniCard);
+                SkillController.activateSkill(miniCard, cardInfo.id, "Cướp lượt thành công!");
                 return;
             }
-
 
             if (GameController.currentPlayerId !== playerId) {
                 alert("Chưa tới lượt, không được xài ké thẻ của người khác!");
