@@ -105,7 +105,8 @@ const SkillController = {
         slogan.innerText = sloganText;
 
         gsap.set(overlay, {autoAlpha: 1});
-        const isInstantCast = (cardId === 'DOUBLE_CAPTURE' || cardId === 'SEIZE_COMMAND');
+        const isInstantCast = (cardId === 'DOUBLE_CAPTURE' || cardId === 'SEIZE_COMMAND'||
+            cardId==="STEAL_CARD"|| cardId==="REMOVE_HIGHEST_CARD");
 
         const tl = gsap.timeline({
             onComplete: async () => {

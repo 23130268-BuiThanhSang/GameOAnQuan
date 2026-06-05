@@ -325,6 +325,32 @@ public class GameManager {
 
             return true;
         }
+        if ("REMOVE_HIGHEST_CARD".equals(skillId)) {
+            Player opponent =(p == player1)? player2: player1;
+
+            if (opponent.cardInventory.isEmpty()) {
+                return false;
+            }
+
+            String removeCard = null;
+            int highestCost = -1;
+
+            for (String cardId : opponent.cardInventory) {
+                Card card =CardStorage.createById(cardId);
+
+                if (card != null && card.cost > highestCost) {
+
+                    highestCost =card.cost;
+
+                    removeCard =cardId;
+                }
+            }
+            if (removeCard != null) {
+                opponent.cardInventory.remove(removeCard);
+            }
+            return true;
+        }
+
         return false;
     }
 

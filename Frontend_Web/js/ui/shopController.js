@@ -95,6 +95,7 @@ rerollCard: async function(playerId, cardIndex) {
     }
 
     try {
+
         const response = await fetch('http://localhost:8080/api/game/shop/reroll', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -235,6 +236,8 @@ rerollCard: async function(playerId, cardIndex) {
                 'LOCK_TILE': { id: 'LOCK_TILE', name: 'Cấm Vận', description: 'Khóa 1 ô của đối thủ trong 3 lượt' },
                 'STEAL_CARD': { id: 'STEAL_CARD', name: 'Đạo Tặc', description: 'Đánh cắp ngẫu nhiên 1 thẻ của đối thủ' },
                 'SEIZE_COMMAND': {id: 'SEIZE_COMMAND', name: 'Cướp Lượt', description: 'Giành quyền đi ngay lập tức'}
+                'REMOVE_HIGHEST_CARD': {id:'REMOVE_HIGHEST_CARD', name:'Loại bỏ Bài', description:'Xóa thẻ giá cao nhất của đối thủ'
+                }
             };
             cardInfo = CARDS_DB[cardId];
         }
@@ -277,21 +280,33 @@ rerollCard: async function(playerId, cardIndex) {
                 return;
             }
 
-            if (cardInfo.id === 'DOUBLE_CAPTURE') {
+            const instantCards = [
+                'DOUBLE_CAPTURE',
+                'STEAL_CARD',
+                'REMOVE_HIGHEST_CARD'
+            ];
+
+            let slogan = "Nhân phẩm bùng nổ!!!";
+
+            if (instantCards.includes(cardInfo.id)) {
+                if(cardInfo.id==='DOUBLE_CAPTURE')
+                    slogan="Ăn một thành hai, lợi thế nhân đôi!";
+
+                if(cardInfo.id==='STEAL_CARD')
+                    slogan="Không ai cấm trộm cắp cả!";
+
+                if(cardInfo.id==='REMOVE_HIGHEST_CARD')
+                    slogan="Phá bỏ chướng ngại!";
+
                 SkillController.activateSkill(
                     miniCard,
                     cardInfo.id,
-                    "Ăn một thành hai, lợi thế nhân đôi!"
+                    slogan
                 );
+
                 return;
             }
 
-            if (cardInfo.id === 'STEAL_CARD') {
-                ShopController.useCard(playerId, cardInfo.id, miniCard);
-                return;
-            }
-
-            let slogan = "Nhân phẩm bùng nổ!!!";
             if (cardInfo.id === 'LOCK_TILE') {
                 slogan = "Lệnh cấm vận! Nông dân đình công!";
             }
@@ -312,6 +327,16 @@ rerollCard: async function(playerId, cardIndex) {
                 (cardId === 'SEIZE_COMMAND')
                 ? "Cướp lượt ngay lập tức ?":
             "Bạn có muốn dùng thẻ Nhân đôi điểm không?";
+        let message="Kích hoạt thẻ?";
+
+        if(cardId==="DOUBLE_CAPTURE")
+            message="Bạn có muốn dùng thẻ Nhân đôi điểm không?";
+
+        if(cardId==="STEAL_CARD")
+            message="Đánh cắp ngẫu nhiên 1 thẻ đối thủ?";
+
+        if(cardId==="REMOVE_HIGHEST_COST")
+            message="Loại bỏ thẻ đắt nhất của đối thủ?";
 
         const confirmUse = confirm(message);
 
@@ -339,9 +364,22 @@ rerollCard: async function(playerId, cardIndex) {
                     cardId === 'SEIZE_COMMAND' ? "Bạn đã cướp lượt thành công!" :
                         "Đã kích hoạt thẻ Nhân đôi điểm!"
             );
+            let success="Đã kích hoạt thẻ!";
+
+            if(cardId==="DOUBLE_CAPTURE")
+                success="Đã kích hoạt Nhân đôi điểm!";
+
+            if(cardId==="STEAL_CARD")
+                success="Đã đánh cắp 1 thẻ đối thủ!";
+
+            if(cardId==="REMOVE_HIGHEST_COST")
+                success="Đã phá hủy thẻ mạnh nhất!";
+
+            alert(success);
 
             if (miniCardElement) {
                 miniCardElement.remove();
+                miniCardElement.offsetHeight;
             }
 
             BoardRender.renderFullState(data);
