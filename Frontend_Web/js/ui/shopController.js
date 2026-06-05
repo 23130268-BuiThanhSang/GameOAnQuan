@@ -222,6 +222,7 @@ rerollCard: async function(playerId, cardIndex) {
     addCardToTray: function(playerId, cardId) {
         const tray = document.getElementById(`skill-tray-p${playerId}`);
         let cardInfo = null;
+
         const shopData = (playerId === 1) ? this.shopDataP1 : this.shopDataP2;
         if (shopData && shopData.length > 0) {
             cardInfo = shopData.find(c => c.id === cardId);
