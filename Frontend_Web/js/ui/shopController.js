@@ -221,10 +221,26 @@ rerollCard: async function(playerId, cardIndex) {
 
     addCardToTray: function(playerId, cardId) {
         const tray = document.getElementById(`skill-tray-p${playerId}`);
+        let cardInfo = null;
         const shopData = (playerId === 1) ? this.shopDataP1 : this.shopDataP2;
+        if (shopData && shopData.length > 0) {
+            cardInfo = shopData.find(c => c.id === cardId);
+        }
 
-        const cardInfo = shopData.find(c => c.id === cardId);
-        if (!cardInfo) return;
+        if (!cardInfo) {
+            const CARDS_DB = {
+                'BONUS_SEED': { id: 'BONUS_SEED', name: 'Được Mùa', description: 'Thêm 1 dân vào ô' },
+                'DOUBLE_CAPTURE': { id: 'DOUBLE_CAPTURE', name: 'Nhân Đôi', description: 'Nhân đôi số quân ăn được' },
+                'LOCK_TILE': { id: 'LOCK_TILE', name: 'Cấm Vận', description: 'Khóa 1 ô của đối thủ trong 3 lượt' },
+                'STEAL_CARD': { id: 'STEAL_CARD', name: 'Đạo Tặc', description: 'Đánh cắp ngẫu nhiên 1 thẻ của đối thủ' }
+            };
+            cardInfo = CARDS_DB[cardId];
+        }
+
+        if (!cardInfo) {
+            console.warn("Không tìm thấy thông tin cho thẻ:", cardId);
+            return;
+        }
 
         const emptyText = tray.querySelector('.empty-tray-text');
         if (emptyText) emptyText.remove();

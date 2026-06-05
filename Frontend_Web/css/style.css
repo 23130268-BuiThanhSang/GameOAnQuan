@@ -759,11 +759,9 @@ body::before {
     z-index: 2000 !important;
 }
 .locked-tile-visual {
-    position: relative !important;
     filter: grayscale(0.6) brightness(0.8);
     transition: all 0.3s ease;
     pointer-events: none;
-    min-height: 80px;
 }
 
 .lock-icon-overlay {

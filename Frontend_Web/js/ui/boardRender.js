@@ -77,7 +77,7 @@ const BoardRender = {
     // Hàm render toàn bộ bàn cờ và điểm số
     renderFullState(gameState) {
         if (!gameState) return;
-
+        console.log("Dữ liệu Board từ Backend:", gameState.board);
         // 1. CẬP NHẬT ĐÈN BÁO LƯỢT CHƠI
         document.getElementById('tray-p1').classList.remove('active-turn');
         document.getElementById('tray-p2').classList.remove('active-turn');

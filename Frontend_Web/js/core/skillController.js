@@ -252,7 +252,9 @@ const SkillController = {
             } else if (skillId === 'LOCK_TILE') {
                 if (typeof AudioController !== 'undefined') AudioController.play('capture');
             }
-
+            GameController.pendingSkillId = null;
+            GameController.isAnimating = false;
+            SkillController.clearHighlights();
             setTimeout(() => {
                 BoardRender.renderFullState(responseData);
             }, 50);
