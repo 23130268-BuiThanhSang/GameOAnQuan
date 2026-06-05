@@ -24,6 +24,7 @@ public class GameManager {
     public Set<Integer> p2RerolledSlots = new HashSet<>();
     public List<Integer> lastAnimationPath = new ArrayList<>();
     public String lastScatterEvent = null;
+    public boolean skipTurn = false;
     public GameManager(String p1Name, String p2Name) {
         player1 = new Player(p1Name, 1);
         player2 = new Player(p2Name, 2);
@@ -157,7 +158,12 @@ public class GameManager {
         return (isMandarin1Empty && isMandarin2Empty) || isDeadlock();
     }
     public void switchTurn() {
-        currentPlayer = (currentPlayer == player1) ? player2 : player1;
+
+        if (!skipTurn) {
+            currentPlayer = (currentPlayer == player1) ? player2 : player1;
+        } else {
+            skipTurn = false; // reset sau khi skip
+        }
         if (!isGameOver()) {
             checkAndScatterPieces();
         }
@@ -169,6 +175,7 @@ public class GameManager {
                 if (t.lockedTurns > 0) t.lockedTurns--;
             }
         }
+
 //        if (fullTurnCount > 0
 //                && (fullTurnCount == 5 || fullTurnCount == 10 || fullTurnCount == 15)
 //                && !inShop
@@ -298,6 +305,28 @@ public class GameManager {
             p.cardInventory.add(stolenCard);
             return true;
         }
+        if ("SEIZE_COMMAND".equals(skillId)) {
+            if (currentPlayer == p) return false;
+
+            setSkipTurn(true);
+            resetTurnState();
+            return true;
+        }
         return false;
     }
+
+    public void setCurrentPlayer(Player player) {
+        this.currentPlayer = player;
+    }
+
+    public void resetTurnState() {
+        this.lastAnimationPath.clear();
+        this.lastScatterEvent = null;
+    }
+
+    public void setSkipTurn(boolean skip) {
+        this.skipTurn = skip;
+    }
+
+
 }
