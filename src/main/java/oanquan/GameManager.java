@@ -306,10 +306,23 @@ public class GameManager {
             return true;
         }
         if ("SEIZE_COMMAND".equals(skillId)) {
+            // Kiểm tra: không thể cướp lượt của chính mình
             if (currentPlayer == p) return false;
 
-            setSkipTurn(true);
+//             Thoát khỏi shop nếu đang trong shop
+            if (inShop) {
+                inShop = false;
+            }
+
+            // Chuyển quyền cho người dùng thẻ
+            currentPlayer = p;
+
+            // Skip lượt đối thủ
+            skipTurn = true;
+
+            // Reset state
             resetTurnState();
+
             return true;
         }
         return false;
