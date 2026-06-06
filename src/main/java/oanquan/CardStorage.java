@@ -34,6 +34,7 @@ public class CardStorage {
         }
         if ("SEIZE_COMMAND".equals(id)) {
             return new SeizeCommandCard();
+        }
         if ("REMOVE_HIGHEST_CARD".equals(id)) {
             return new RemoveHighestCard();
         }

@@ -235,7 +235,7 @@ rerollCard: async function(playerId, cardIndex) {
                 'DOUBLE_CAPTURE': { id: 'DOUBLE_CAPTURE', name: 'Nhân Đôi', description: 'Nhân đôi số quân ăn được' },
                 'LOCK_TILE': { id: 'LOCK_TILE', name: 'Cấm Vận', description: 'Khóa 1 ô của đối thủ trong 3 lượt' },
                 'STEAL_CARD': { id: 'STEAL_CARD', name: 'Đạo Tặc', description: 'Đánh cắp ngẫu nhiên 1 thẻ của đối thủ' },
-                'SEIZE_COMMAND': {id: 'SEIZE_COMMAND', name: 'Cướp Lượt', description: 'Giành quyền đi ngay lập tức'}
+                'SEIZE_COMMAND': {id: 'SEIZE_COMMAND', name: 'Cướp Lượt', description: 'Giành quyền đi ngay lập tức'},
                 'REMOVE_HIGHEST_CARD': {id:'REMOVE_HIGHEST_CARD', name:'Loại bỏ Bài', description:'Xóa thẻ giá cao nhất của đối thủ'
                 }
             };
@@ -321,13 +321,13 @@ rerollCard: async function(playerId, cardIndex) {
         if (cardId !== 'DOUBLE_CAPTURE' && cardId !== 'STEAL_CARD' && cardId !== 'SEIZE_COMMAND') {
             return;
         }
-
-        const message = (cardId === 'STEAL_CARD')
+        let message="Kích hoạt thẻ?";
+        message = (cardId === 'STEAL_CARD')
                 ?"Đánh cắp ngẫu nhiên 1 thẻ đối thủ?" :
                 (cardId === 'SEIZE_COMMAND')
                 ? "Cướp lượt ngay lập tức ?":
             "Bạn có muốn dùng thẻ Nhân đôi điểm không?";
-        let message="Kích hoạt thẻ?";
+
 
         if(cardId==="DOUBLE_CAPTURE")
             message="Bạn có muốn dùng thẻ Nhân đôi điểm không?";
