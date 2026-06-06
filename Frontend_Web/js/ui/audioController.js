@@ -17,17 +17,15 @@ const AudioController = {
     currentBgm: null,
 
     init() {
-        // Giữ logic check an toàn từ localStorage của bạn A
+        // 10.1.1: Hệ thống khởi tạo AudioController, đọc cấu hình isAudioEnabled từ bộ nhớ trình duyệt (localStorage)
         const saved = localStorage.getItem('oanquan_audio');
         this.isAudioEnabled = saved !== 'false';
 
-        // Setup âm lượng cho hiệu ứng (dùng mức 0.05 nhẹ nhàng của bạn B để không làm chói tai)
         Object.values(this.sounds).forEach(s => {
             s.volume = 0.05;
             s.preload = 'auto';
         });
 
-        // Setup cho nhạc nền của bạn B
         Object.values(this.bgm).forEach(b => {
             b.loop = true;
             b.volume = 0.4;
@@ -36,33 +34,33 @@ const AudioController = {
     },
 
     play(effectName) {
-        // Cập nhật trạng thái liên tục giống bạn A
+        // 10.1.3a.1: Các UC khác (UC4, UC11) gửi yêu cầu phát âm thanh (SFX) thông qua hàm play(effectName)
         this.isAudioEnabled = localStorage.getItem('oanquan_audio') !== 'false';
 
-        // Check an toàn: chặn phát tiếng nếu đang tắt loa
+        // 10.1.3a.2: Hệ thống kiểm tra cờ isAudioEnabled. Nếu đang Bật, tiến hành reset thời gian track và phát âm thanh
         if (!this.isAudioEnabled) return;
 
         const sound = this.sounds[effectName];
         if (!sound) return;
 
         sound.currentTime = 0;
+
+        // 10.1.3a.3: Bắt lỗi (catch) tự động nếu file âm thanh không khả dụng
         sound.play().catch(err => {
             console.warn('Không phát được âm thanh:', err);
         });
     },
 
     playBgm(type) {
-        // Dừng bài nhạc cũ trước khi chuyển bài mới (logic của bạn B)
+        // 10.1.2: Khi chuyển giao diện, hệ thống gọi playBgm để tạm dừng nhạc nền cũ và phát nhạc nền mới tương ứng
         if (this.currentBgm) {
             this.currentBgm.pause();
             this.currentBgm.currentTime = 0;
         }
 
-        // Gán bài mới
         this.currentBgm = this.bgm[type];
-
-        // Check an toàn từ bạn A: Chỉ phát nhạc nền nếu chưa bị tắt loa
         if (this.isAudioEnabled && this.currentBgm) {
+            // 10.1.3: Nếu trình duyệt chặn phát nhạc tự động (Autoplay Policy), hệ thống bắt lỗi để không làm gián đoạn game
             this.currentBgm.play().catch(e => {
                 console.warn("BGM bị trình duyệt chặn phát tự động:", e);
             });
@@ -70,10 +68,11 @@ const AudioController = {
     },
 
     toggle() {
+        // 10.1.2a.2 & 10.1.2a.3: Hệ thống gọi hàm toggle() để đảo ngược trạng thái isAudioEnabled và lưu cấu hình mới
         this.isAudioEnabled = !this.isAudioEnabled;
         localStorage.setItem('oanquan_audio', this.isAudioEnabled);
 
-        // Cải tiến: Tắt nhạc nền ngay lập tức khi toggle sang trạng thái Tắt
+        // 10.1.2a.4: Nếu trạng thái mới là Tắt, hệ thống ngay lập tức tạm dừng (pause) BGM đang phát
         if (!this.isAudioEnabled && this.currentBgm) {
             this.currentBgm.pause();
         }
@@ -82,10 +81,10 @@ const AudioController = {
     },
 
     setEnabled(enabled) {
+        // Hàm hỗ trợ đồng bộ trạng thái âm thanh trực tiếp từ MenuController (Utility)
         this.isAudioEnabled = enabled;
         localStorage.setItem('oanquan_audio', enabled);
 
-        // Cải tiến: Tắt nhạc nền ngay lập tức nếu bị set thành false
         if (!enabled && this.currentBgm) {
             this.currentBgm.pause();
         }

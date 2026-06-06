@@ -4,86 +4,9 @@
  */
 
 const SkillController = {
-    /**
-     * this is code for skill activation animation, currently not used because of time constraint. We will directly apply skill effect on click and show the animation on the target hole instead.
-     * @param skillId
-     * @param playerId
-     */
-    // activateSkill: function(cardElement, cardId, sloganText) {
-    //     const ownerId = cardElement.closest('#skill-tray-p1') ? 1 : 2;
-    //     if (ownerId !== GameController.currentPlayerId) {
-    //         alert("Chưa tới lượt của bạn, cất tay đi!");
-    //         return;
-    //     }
-    //
-    //     GameController.isAnimating = true;
-    //
-    //     const rect = cardElement.getBoundingClientRect();
-    //     const overlay = document.getElementById('skill-overlay');
-    //     const flyingCard = document.getElementById('flying-card');
-    //     const slogan = document.getElementById('skill-slogan');
-    //
-    //     flyingCard.style.backgroundImage = `url('assets/images/skills/${cardId}.png')`;
-    //     slogan.innerText = sloganText;
-    //
-    //     gsap.set(overlay, { autoAlpha: 1 });
-    //     const isInstantCast = (cardId === 'DOUBLE_CAPTURE');
-    //
-    //     const tl = gsap.timeline({
-    //         onComplete: async () => {
-    //             gsap.to(overlay, { autoAlpha: 0, duration: 0.3 });
-    //             cardElement.remove();
-    //
-    //             if (isInstantCast) {
-    //                 try {
-    //                     const responseData = await ApiClient.sendUseSkill(ownerId, cardId, -1);
-    //
-    //                     if (!responseData || responseData.status === "error") {
-    //                         alert(responseData?.message || "Lỗi khi dùng thẻ!");
-    //                     } else {
-    //                         if (typeof AudioController !== 'undefined') {
-    //                             AudioController.play('drop');
-    //                         }
-    //
-    //                         BoardRender.renderFullState(responseData);
-    //                     }
-    //                 } catch (e) {
-    //                     console.error(e);
-    //                 }
-    //
-    //                 GameController.isAnimating = false;
-    //             } else {
-    //                 GameController.pendingSkillId = cardId;
-    //                 SkillController.highlightTargets(cardId, ownerId);
-    //                 console.log(`[Mock] Đã tung chiêu! Đợi click vào ô để áp dụng ${cardId}...`);
-    //             }
-    //         }
-    //     });
-    //
-    //     tl.fromTo(flyingCard,
-    //         { x: rect.left - (window.innerWidth / 2) + (rect.width / 2), y: rect.top - (window.innerHeight / 2) + (rect.height / 2), scale: 0.3, rotationY: 0, rotation: 0, opacity: 1 },
-    //         { x: 0, y: -50, scale: 1.5, rotationY: 360, duration: 0.8, ease: "back.out(1.2)" }
-    //     )
-    //         .to(slogan, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, "-=0.3")
-    //         .to(flyingCard, { scale: 0, opacity: 0, rotation: 45, duration: 0.4, delay: 1, ease: "back.in(1.5)" })
-    //         .to(slogan, { opacity: 0, y: 20, duration: 0.3 }, "<");
-    // },
-
-
-    /**
-     * this is code test replace for activateSkill, we will directly apply skill effect on click and show the animation on the target hole instead. This function is only responsible for highlighting the targetable holes when a skill is activated and waiting for player to click on the target hole.
-     * @param skillId
-     * @param playerId
-     */
     activateSkill: function(cardElement, cardId, sloganText) {
 
         const ownerId = cardElement.closest('#skill-tray-p1') ? 1 : 2;
-
-
-        // if (ownerId !== GameController.currentPlayerId) {
-        //     alert("Chưa tới lượt của bạn, cất tay đi!");
-        //     return;
-        // }
 
         if (cardId !== 'SEIZE_COMMAND' && ownerId !== GameController.currentPlayerId) {
             alert("Chưa tới lượt của bạn, cất tay đi!");
@@ -108,33 +31,13 @@ const SkillController = {
         const isInstantCast = (cardId === 'DOUBLE_CAPTURE' || cardId === 'SEIZE_COMMAND'||
             cardId==="STEAL_CARD"|| cardId==="REMOVE_HIGHEST_CARD");
 
+        // 11.1.1: Người chơi bấm chọn kích hoạt thẻ, Client thiết lập khung overlay ẩn và tạo chuỗi hoạt ảnh bằng GSAP Timeline.
         const tl = gsap.timeline({
             onComplete: async () => {
                 gsap.to(overlay, {autoAlpha: 0, duration: 0.3});
                 cardElement.remove();
 
-                // if (isInstantCast) {
-                //     try {
-                //         const responseData = await ApiClient.sendUseSkill(ownerId, cardId, -1);
-                //
-                //         if (!responseData || responseData.status === "error") {
-                //             alert(responseData?.message || "Lỗi khi dùng thẻ!");
-                //         } else {
-                //             if (typeof AudioController !== 'undefined') {
-                //                 AudioController.play('drop');
-                //             }
-                //
-                //             BoardRender.renderFullState(responseData);
-                //         }
-                //     } catch (e) {
-                //         console.error(e);
-                //     }
-                //
-                //     GameController.isAnimating = false;
-                //
-                /**
-                 * add animation for SEIZE_COMMAND and DOUBLE_CAPTURE here, because these 2 skills are instant cast and don't require target selection, we will directly call API to apply skill effect and show animation on the target hole (if any) after the flying card animation is done. For other skills, we will highlight the targetable holes and wait for player to click on the target hole to apply the skill effect.
-                 */
+                // 11.1.3: Kết thúc hiệu ứng, Client kiểm tra loại thẻ. Nếu là thẻ tác dụng ngay (Instant Cast), Client gọi API gửi trực tiếp xuống Backend.
                 if (isInstantCast) {
                     try {
                         let responseData;
@@ -170,6 +73,7 @@ const SkillController = {
 
                     GameController.isAnimating = false;
                 } else {
+                    // 11.1.4: Nếu là thẻ chọn mục tiêu, Client gán ID thẻ vào pendingSkillId và làm sáng các ô cờ hợp lệ để chờ người chơi click chọn.
                     GameController.pendingSkillId = cardId;
                     SkillController.highlightTargets(cardId, ownerId);
 
@@ -181,6 +85,7 @@ const SkillController = {
             }
         });
 
+        // 11.1.2: Thẻ bay từ khay ra giữa màn hình, thực hiện hiệu ứng xoay 3D (rotationY) và hiển thị Slogan.
         tl.fromTo(flyingCard,
             {
                 x: rect.left - (window.innerWidth / 2) + (rect.width / 2),
