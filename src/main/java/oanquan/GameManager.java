@@ -34,9 +34,10 @@ public class GameManager {
             board[i] = new Tile(i, i == 5 || i == 11);
         }
     }
-
+    // 11.1.3a.2: Hàm quản lý tập trung để duyệt và kích hoạt các hiệu ứng (Effect) đang nằm trong danh sách chờ
     public void executeHooks(TriggerTime time, Turn currentTurn) {
         for (Effect effect : currentPlayer.activeEffects.get(time)) {
+            // 11.1.3a.3: Gọi hàm trigger() của hiệu ứng để can thiệp vào kết quả tính toán
             effect.trigger(this, currentTurn);
         }
     }
@@ -47,12 +48,14 @@ public class GameManager {
         currentTurn.startIndex = startIndex;
         currentTurn.direction = direction;
 
+        // 11.1.3a.2: Điểm neo sau khi chọn ô (Phần Hook Architecture)
         executeHooks(TriggerTime.AFTER_TILE_PICK, currentTurn);
         executeHooks(TriggerTime.AFTER_DIR_PICK, currentTurn);
 
         currentTurn.piecesInHand = board[startIndex].pickUpPieces();
         currentTurn.currentTileIndex = startIndex;
 
+        // 11.1.3a.2: Điểm neo sau khi bốc quân
         executeHooks(TriggerTime.AFTER_PICKUP, currentTurn);
 
         while (currentTurn.piecesInHand > 0) {
@@ -60,6 +63,7 @@ public class GameManager {
             if (board[currentTurn.currentTileIndex].lockedTurns > 0) {
                 continue;
             }
+            // 11.1.3a.2: Điểm neo trước khi rải quân (Sow)
             executeHooks(TriggerTime.BEFORE_SOW, currentTurn);
 
             board[currentTurn.currentTileIndex].citizenPieces++;
@@ -67,6 +71,7 @@ public class GameManager {
 
             currentTurn.animationPath.add(currentTurn.currentTileIndex);
 
+            // 11.1.3a.2: Điểm neo sau khi rải quân
             executeHooks(TriggerTime.AFTER_SOW, currentTurn);
 
             if (currentTurn.piecesInHand == 0) {
@@ -90,9 +95,11 @@ public class GameManager {
             }
         }
 
+        // 11.1.3a.2: Điểm neo cuối lượt
         executeHooks(TriggerTime.END_TURN, currentTurn);
         this.lastAnimationPath = currentTurn.animationPath;
 
+        // 11.1.3b.1 & 11.1.3b.2: Dọn dẹp (Garbage Collection) các hiệu ứng chỉ có tác dụng 1 lượt
         currentPlayer.activeEffects.get(TriggerTime.BEFORE_CAPTURE).removeIf(e -> e instanceof DoubleScoreEffect);
 
         switchTurn();
@@ -115,6 +122,7 @@ public class GameManager {
             }
             currentTurn.currentTileIndex = targetIndex;
 
+            // 11.1.3a.2: Điểm neo TRƯỚC KHI ăn quân (Nơi hiệu ứng thẻ như Nhân đôi được kích hoạt)
             executeHooks(TriggerTime.BEFORE_CAPTURE, currentTurn);
             double captured = board[targetIndex].calcScore();
             captured *= currentTurn.scoreMultiplier;
@@ -126,6 +134,7 @@ public class GameManager {
             currentPlayer.capturedCount += actualPieces;
             currentTurn.animationPath.add(targetIndex);
 
+            // 11.1.3a.2: Điểm neo SAU KHI ăn quân
             executeHooks(TriggerTime.AFTER_CAPTURE, currentTurn);
             int nextEmptyCheck = (targetIndex + direction + 12) % 12;
             while (board[nextEmptyCheck].lockedTurns > 0) {
@@ -139,7 +148,6 @@ public class GameManager {
             }
         }
     }
-
     public boolean isValidMove(int index) {
         if (inShop) return false;
         if (board[index].isMandarin) return false;
