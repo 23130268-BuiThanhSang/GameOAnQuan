@@ -7,7 +7,7 @@ import java.util.*;
 @RequestMapping("/api/game")
 public class GameController {
 
-    private GameManager game = new GameManager("Player 1", "Player 2");
+    public GameManager game = new GameManager("Player 1", "Player 2");
 
     @PostMapping("/move")
     public GameTurnResponse makeMove(@RequestBody MoveRequest request) {
