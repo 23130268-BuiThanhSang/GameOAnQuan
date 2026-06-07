@@ -81,6 +81,11 @@ renderCards: function(playerId, options) {
     });
 },
 
+// Development Testing - UC7_REROLL_UI
+// Test case:
+// 1. Bấm nút xoay dưới thẻ.
+// 2. Frontend gọi API /shop/reroll.
+// 3. Giao diện cập nhật thẻ mới và khóa nút reroll tại vị trí đó.
 rerollCard: async function(playerId, cardIndex) {
     if (playerId !== this.currentShopTurn) {
         alert(`Đang là lượt của Player ${this.currentShopTurn}, không được đổi thẻ của người khác!`);
@@ -290,6 +295,10 @@ rerollCard: async function(playerId, cardIndex) {
             let slogan = "Nhân phẩm bùng nổ!!!";
 
             if (instantCards.includes(cardInfo.id)) {
+            // ===== TEST UC7 - DOUBLE CAPTURE ACTIVATION UI =====
+            // DT_UC7_08: Bấm thẻ Double Capture trong khay -> chạy hiệu ứng kỹ năng.
+            // Kết quả mong đợi: hiện câu "Ăn một thành hai, lợi thế nhân đôi!".
+            // Sau hiệu ứng, thẻ Double Capture tự mất khỏi khay.
                 if(cardInfo.id==='DOUBLE_CAPTURE')
                     slogan="Ăn một thành hai, lợi thế nhân đôi!";
 
@@ -390,7 +399,11 @@ rerollCard: async function(playerId, cardIndex) {
             alert("Không thể kết nối Backend để dùng thẻ!");
         }
     },
-
+// Development Testing - UC7_SHOP_TIMER
+// Test case:
+// 1. Khi Shop mở, timer bắt đầu đếm ngược.
+// 2. Nếu Player 1 không chọn thẻ, hệ thống tự động skip và chuyển sang Player 2.
+// 3. Nếu Player 2 không chọn thẻ, Shop tự đóng và game tiếp tục.
     startShopTimer: function() {
         this.stopShopTimer();
 
@@ -427,7 +440,10 @@ rerollCard: async function(playerId, cardIndex) {
             timer.classList.remove('timer-warning');
         }
     },
-
+// ===== TEST UC7 - AUTO SKIP WHEN TIMEOUT =====
+// DT_UC7_07: Hết thời gian chọn thẻ -> tự động gọi API /shop/skip.
+// Nếu Player 1 hết giờ -> chuyển sang Player 2.
+// Nếu Player 2 hết giờ -> đóng Shop và tiếp tục ván đấu.
     skipShopByTimer: async function() {
         const playerId = this.currentShopTurn;
 

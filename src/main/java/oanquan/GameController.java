@@ -141,6 +141,10 @@ public class GameController {
         }
     }
 
+    // ===== TEST UC7 - BUY CARD =====
+    // DT_UC7_02: Người chơi đủ điểm -> mua thẻ thành công, điểm bị trừ.
+    // DT_UC7_03: Người chơi không đủ điểm -> hệ thống không cho mua thẻ.
+    // RT_UC7_02: Sau khi mua thẻ, game vẫn tiếp tục bình thường.
     @PostMapping("/shop/buy")
     public GameTurnResponse buyShop(@RequestBody Map<String, Object> request) {
         int playerId = (int) request.get("playerId");
@@ -224,6 +228,10 @@ public class GameController {
         return response;
     }
 
+    // Development Testing - UC7_SKIP_SHOP
+// Test case:
+// 1. Player 1 hết thời gian chọn thẻ -> hệ thống tự động bỏ lượt và chuyển sang Player 2.
+// 2. Player 2 hết thời gian chọn thẻ -> hệ thống đóng Shop và tiếp tục game.
     @PostMapping("/shop/skip")
     public GameTurnResponse skipShop(@RequestBody Map<String, Integer> request) {
         int playerId = request.get("playerId");
@@ -250,6 +258,12 @@ public class GameController {
         fillGameState(response);
         return response;
     }
+    // Development Testing - UC7_DOUBLE_CAPTURE
+// Test case:
+// 1. Người chơi bấm thẻ Double Capture trong khay.
+// 2. Hệ thống kích hoạt hiệu ứng nhân đôi điểm.
+// 3. Lượt tiếp theo nếu ăn quân thì điểm được nhân đôi.
+// 4. Sau lượt đó hiệu ứng bị tắt.
     // 9.1.5 Nhận request từ frontend
     @PostMapping("/card/use")
     public GameTurnResponse useCard(@RequestBody Map<String, Object> request) {
@@ -294,6 +308,10 @@ public class GameController {
         return response;
     }
 
+    // Development Testing - UC7_REROLL
+// Test case:
+// 1. Người chơi bấm nút reroll lần đầu -> thẻ được đổi sang thẻ khác.
+// 2. Người chơi bấm reroll lần hai tại cùng vị trí -> hệ thống không cho đổi tiếp.
     @PostMapping("/shop/reroll")
     public GameTurnResponse rerollShopCard(@RequestBody Map<String, Integer> request) {
         int playerId = request.get("playerId");
