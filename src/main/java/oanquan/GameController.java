@@ -271,10 +271,13 @@ public class GameController {
             return response;
         }
         // 9.1.6 (GameService.useSkill)
+        // 2.2.2.5: Backend áp dụng logic của thẻ lên game state,
+        // cập nhật inventory card và chuẩn bị dữ liệu phản hồi mới.
         // Xử lý logic skill
         boolean isSuccess = game.useSkill(playerId, cardId, targetIndex);
 
         if (isSuccess) {
+            // 2.2.2.5: Loại bỏ thẻ đã sử dụng khỏi card inventory.
             player.cardInventory.remove(cardId);
 
             response.status = "success";
@@ -284,6 +287,7 @@ public class GameController {
             response.message = "Không thể sử dụng thẻ này vào lúc này!";
         }
         // 9.1.7 (GameController.fillGameState)
+        // 2.2.2.6: Tạo dữ liệu trạng thái mới để gửi lại Frontend render.
         // Cập nhật trạng thái game
         fillGameState(response);
         // 9.1.8 Trả response về frontend

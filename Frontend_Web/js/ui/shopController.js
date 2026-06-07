@@ -219,7 +219,7 @@ rerollCard: async function(playerId, cardIndex) {
     }
 },
 
-
+    // 2.2.2.2: Frontend render đồ họa thẻ tương ứng lên khay kỹ năng cá nhân của người chơi.
     addCardToTray: function(playerId, cardId) {
         const tray = document.getElementById(`skill-tray-p${playerId}`);
         let cardInfo = null;
@@ -262,6 +262,7 @@ rerollCard: async function(playerId, cardIndex) {
             </div>
         `;
 
+        // 2.2.2.3: Người chơi chọn một thẻ kỹ năng từ khay để bắt đầu kích hoạt.
         miniCard.onclick = () => {
             // // SEIZE_COMMAND có thể dùng bất kỳ lúc nào, không cần check lượt
             // if (cardInfo.id === 'SEIZE_COMMAND') {
@@ -493,6 +494,7 @@ rerollCard: async function(playerId, cardIndex) {
                     if (data && data.status === "error") {
                         alert(data.message);
                     } else {
+                        // 2.2.2.1: Frontend gọi ShopController.addCardToTray() sau khi nhận tín hiệu mua thẻ thành công từ Shop.
                         this.addCardToTray(playerId, cId);
                     }
                 }
