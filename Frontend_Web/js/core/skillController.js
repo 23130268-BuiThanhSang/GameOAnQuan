@@ -68,6 +68,7 @@ const SkillController = {
                             responseData = await response.json();
                         } else {
                             // DOUBLE_CAPTURE dùng endpoint cũ
+                            // 2.2.2.4: Frontend gửi yêu cầu kích hoạt kèm mã định danh thẻ xuống Backend.
                             responseData = await ApiClient.sendUseSkill(ownerId, cardId, -1);
                         }
                         // 9.4.1 (Frontend xử lý lỗi backend)
@@ -79,6 +80,7 @@ const SkillController = {
                             }
                             // 9.1.8 (BoardRender.renderFullState)
                             // Update UI theo state mới từ backend
+                            // 2.2.2.6: Frontend nhận dữ liệu phản hồi và cập nhật lại bàn cờ cùng khay kỹ năng.
                             BoardRender.renderFullState(responseData);
                         }
                     } catch (e) {
