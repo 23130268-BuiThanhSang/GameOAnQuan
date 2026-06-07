@@ -81,10 +81,11 @@ renderCards: function(playerId, options) {
     });
 },
 
-// ===== TEST UC7 - FRONTEND REROLL CARD =====
-// DT_UC7_04: Bấm nút xoay dưới thẻ -> gọi API /shop/reroll.
-// DT_UC7_05: Sau khi reroll, nút xoay tại vị trí đó bị khóa.
-// RT_UC7_03: Giao diện Shop cập nhật đúng sau khi merge code.
+// Development Testing - UC7_REROLL_UI
+// Test case:
+// 1. Bấm nút xoay dưới thẻ.
+// 2. Frontend gọi API /shop/reroll.
+// 3. Giao diện cập nhật thẻ mới và khóa nút reroll tại vị trí đó.
 rerollCard: async function(playerId, cardIndex) {
     if (playerId !== this.currentShopTurn) {
         alert(`Đang là lượt của Player ${this.currentShopTurn}, không được đổi thẻ của người khác!`);
@@ -398,10 +399,11 @@ rerollCard: async function(playerId, cardIndex) {
             alert("Không thể kết nối Backend để dùng thẻ!");
         }
     },
-// ===== TEST UC7 - SHOP COUNTDOWN TIMER =====
-// DT_UC7_07: Timer giảm dần khi tới lượt người chơi chọn thẻ.
-// DT_UC7_08: Khi timer về 0, hệ thống tự động bỏ lượt chọn.
-// RT_UC7_04: Sau khi tích hợp, timer hoạt động ổn định và không hiện popup lỗi.
+// Development Testing - UC7_SHOP_TIMER
+// Test case:
+// 1. Khi Shop mở, timer bắt đầu đếm ngược.
+// 2. Nếu Player 1 không chọn thẻ, hệ thống tự động skip và chuyển sang Player 2.
+// 3. Nếu Player 2 không chọn thẻ, Shop tự đóng và game tiếp tục.
     startShopTimer: function() {
         this.stopShopTimer();
 

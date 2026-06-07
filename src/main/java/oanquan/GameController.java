@@ -228,10 +228,10 @@ public class GameController {
         return response;
     }
 
-    // ===== TEST UC7 - SKIP SHOP =====
-    // DT_UC7_06: Người chơi bỏ qua lượt chọn -> chuyển sang người chơi tiếp theo.
-    // DT_UC7_07: Hết thời gian chọn thẻ -> hệ thống tự động gọi skip shop.
-    // RT_UC7_07: Sau khi cả hai người chơi hoàn tất, Shop đóng và game tiếp tục.
+    // Development Testing - UC7_SKIP_SHOP
+// Test case:
+// 1. Player 1 hết thời gian chọn thẻ -> hệ thống tự động bỏ lượt và chuyển sang Player 2.
+// 2. Player 2 hết thời gian chọn thẻ -> hệ thống đóng Shop và tiếp tục game.
     @PostMapping("/shop/skip")
     public GameTurnResponse skipShop(@RequestBody Map<String, Integer> request) {
         int playerId = request.get("playerId");
@@ -258,10 +258,12 @@ public class GameController {
         fillGameState(response);
         return response;
     }
-    // ===== TEST UC7 - USE DOUBLE CAPTURE =====
-// DT_UC7_08: Bấm Double Capture trong khay -> hiệu ứng được kích hoạt.
-// DT_UC7_09: Lượt tiếp theo nếu ăn quân -> điểm ăn được nhân đôi.
-// DT_UC7_10: Sau lượt được nhân đôi -> hiệu ứng tự tắt.
+    // Development Testing - UC7_DOUBLE_CAPTURE
+// Test case:
+// 1. Người chơi bấm thẻ Double Capture trong khay.
+// 2. Hệ thống kích hoạt hiệu ứng nhân đôi điểm.
+// 3. Lượt tiếp theo nếu ăn quân thì điểm được nhân đôi.
+// 4. Sau lượt đó hiệu ứng bị tắt.
     // 9.1.5 Nhận request từ frontend
     @PostMapping("/card/use")
     public GameTurnResponse useCard(@RequestBody Map<String, Object> request) {
@@ -306,11 +308,10 @@ public class GameController {
         return response;
     }
 
-    // ===== TEST UC7 - REROLL SHOP CARD =====
-// DT_UC7_04: Bấm nút reroll lần đầu -> thẻ được đổi sang thẻ khác.
-// DT_UC7_05: Bấm reroll lần hai tại cùng vị trí -> hệ thống không cho đổi tiếp.
-// RT_UC7_03: Sau khi tích hợp, chức năng reroll vẫn cập nhật
-// đúng danh sách thẻ.
+    // Development Testing - UC7_REROLL
+// Test case:
+// 1. Người chơi bấm nút reroll lần đầu -> thẻ được đổi sang thẻ khác.
+// 2. Người chơi bấm reroll lần hai tại cùng vị trí -> hệ thống không cho đổi tiếp.
     @PostMapping("/shop/reroll")
     public GameTurnResponse rerollShopCard(@RequestBody Map<String, Integer> request) {
         int playerId = request.get("playerId");
