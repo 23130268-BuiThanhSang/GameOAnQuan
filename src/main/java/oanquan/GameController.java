@@ -141,6 +141,10 @@ public class GameController {
         }
     }
 
+    // ===== TEST UC7 - BUY CARD =====
+    // DT_UC7_02: Người chơi đủ điểm -> mua thẻ thành công, điểm bị trừ.
+    // DT_UC7_03: Người chơi không đủ điểm -> hệ thống không cho mua thẻ.
+    // RT_UC7_02: Sau khi mua thẻ, game vẫn tiếp tục bình thường.
     @PostMapping("/shop/buy")
     public GameTurnResponse buyShop(@RequestBody Map<String, Object> request) {
         int playerId = (int) request.get("playerId");
@@ -224,6 +228,10 @@ public class GameController {
         return response;
     }
 
+    // ===== TEST UC7 - SKIP SHOP =====
+    // DT_UC7_06: Người chơi bỏ qua lượt chọn -> chuyển sang người chơi tiếp theo.
+    // DT_UC7_07: Hết thời gian chọn thẻ -> hệ thống tự động gọi skip shop.
+    // RT_UC7_07: Sau khi cả hai người chơi hoàn tất, Shop đóng và game tiếp tục.
     @PostMapping("/shop/skip")
     public GameTurnResponse skipShop(@RequestBody Map<String, Integer> request) {
         int playerId = request.get("playerId");
@@ -250,6 +258,10 @@ public class GameController {
         fillGameState(response);
         return response;
     }
+    // ===== TEST UC7 - USE DOUBLE CAPTURE =====
+// DT_UC7_08: Bấm Double Capture trong khay -> hiệu ứng được kích hoạt.
+// DT_UC7_09: Lượt tiếp theo nếu ăn quân -> điểm ăn được nhân đôi.
+// DT_UC7_10: Sau lượt được nhân đôi -> hiệu ứng tự tắt.
     // 9.1.5 Nhận request từ frontend
     @PostMapping("/card/use")
     public GameTurnResponse useCard(@RequestBody Map<String, Object> request) {
@@ -294,6 +306,11 @@ public class GameController {
         return response;
     }
 
+    // ===== TEST UC7 - REROLL SHOP CARD =====
+// DT_UC7_04: Bấm nút reroll lần đầu -> thẻ được đổi sang thẻ khác.
+// DT_UC7_05: Bấm reroll lần hai tại cùng vị trí -> hệ thống không cho đổi tiếp.
+// RT_UC7_03: Sau khi tích hợp, chức năng reroll vẫn cập nhật
+// đúng danh sách thẻ.
     @PostMapping("/shop/reroll")
     public GameTurnResponse rerollShopCard(@RequestBody Map<String, Integer> request) {
         int playerId = request.get("playerId");

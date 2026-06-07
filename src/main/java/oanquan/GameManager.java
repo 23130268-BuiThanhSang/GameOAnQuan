@@ -283,6 +283,9 @@ public class GameManager {
         shopEventId++;
         p1ShopDone = false;
         p2ShopDone = false;
+        // ===== TEST UC7 - RESET REROLL STATE =====
+// DT_UC7_01: Khi Shop mới mở, trạng thái reroll của hai người chơi được reset.
+// Kết quả mong đợi: mỗi vị trí thẻ có thể reroll 1 lần trong Shop mới.
         p1RerolledSlots.clear();
         p2RerolledSlots.clear();
         p1ShopOptions = generateShopOptions(lastP1ShopCards, p1BoughtCards);

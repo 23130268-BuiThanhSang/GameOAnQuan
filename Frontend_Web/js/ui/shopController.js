@@ -81,6 +81,10 @@ renderCards: function(playerId, options) {
     });
 },
 
+// ===== TEST UC7 - FRONTEND REROLL CARD =====
+// DT_UC7_04: Bấm nút xoay dưới thẻ -> gọi API /shop/reroll.
+// DT_UC7_05: Sau khi reroll, nút xoay tại vị trí đó bị khóa.
+// RT_UC7_03: Giao diện Shop cập nhật đúng sau khi merge code.
 rerollCard: async function(playerId, cardIndex) {
     if (playerId !== this.currentShopTurn) {
         alert(`Đang là lượt của Player ${this.currentShopTurn}, không được đổi thẻ của người khác!`);
@@ -290,6 +294,10 @@ rerollCard: async function(playerId, cardIndex) {
             let slogan = "Nhân phẩm bùng nổ!!!";
 
             if (instantCards.includes(cardInfo.id)) {
+            // ===== TEST UC7 - DOUBLE CAPTURE ACTIVATION UI =====
+            // DT_UC7_08: Bấm thẻ Double Capture trong khay -> chạy hiệu ứng kỹ năng.
+            // Kết quả mong đợi: hiện câu "Ăn một thành hai, lợi thế nhân đôi!".
+            // Sau hiệu ứng, thẻ Double Capture tự mất khỏi khay.
                 if(cardInfo.id==='DOUBLE_CAPTURE')
                     slogan="Ăn một thành hai, lợi thế nhân đôi!";
 
@@ -390,7 +398,10 @@ rerollCard: async function(playerId, cardIndex) {
             alert("Không thể kết nối Backend để dùng thẻ!");
         }
     },
-
+// ===== TEST UC7 - SHOP COUNTDOWN TIMER =====
+// DT_UC7_07: Timer giảm dần khi tới lượt người chơi chọn thẻ.
+// DT_UC7_08: Khi timer về 0, hệ thống tự động bỏ lượt chọn.
+// RT_UC7_04: Sau khi tích hợp, timer hoạt động ổn định và không hiện popup lỗi.
     startShopTimer: function() {
         this.stopShopTimer();
 
@@ -427,7 +438,10 @@ rerollCard: async function(playerId, cardIndex) {
             timer.classList.remove('timer-warning');
         }
     },
-
+// ===== TEST UC7 - AUTO SKIP WHEN TIMEOUT =====
+// DT_UC7_07: Hết thời gian chọn thẻ -> tự động gọi API /shop/skip.
+// Nếu Player 1 hết giờ -> chuyển sang Player 2.
+// Nếu Player 2 hết giờ -> đóng Shop và tiếp tục ván đấu.
     skipShopByTimer: async function() {
         const playerId = this.currentShopTurn;
 
