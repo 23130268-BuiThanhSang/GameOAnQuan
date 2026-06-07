@@ -8,7 +8,6 @@ import java.util.*;
 public class GameController {
 
     private GameManager game = new GameManager("Player 1", "Player 2");
-
     @PostMapping("/move")
     public GameTurnResponse makeMove(@RequestBody MoveRequest request) {
         GameTurnResponse response = new GameTurnResponse();
@@ -250,7 +249,7 @@ public class GameController {
         fillGameState(response);
         return response;
     }
-
+    // 9.1.5 Nhận request từ frontend
     @PostMapping("/card/use")
     public GameTurnResponse useCard(@RequestBody Map<String, Object> request) {
         int playerId = (int) request.get("playerId");
@@ -262,12 +261,16 @@ public class GameController {
 
         GameTurnResponse response = new GameTurnResponse();
         Player player = (playerId == 1) ? game.player1 : game.player2;
+        // 9.5.1 (GameController.useCard)
+        // Kiểm tra người chơi có thẻ không
         if (!player.cardInventory.contains(cardId)) {
             response.status = "error";
             response.message = "Bạn không sở hữu thẻ kỹ năng này!";
             fillGameState(response);
             return response;
         }
+        // 9.1.6 (GameService.useSkill)
+        // Xử lý logic skill
         boolean isSuccess = game.useSkill(playerId, cardId, targetIndex);
 
         if (isSuccess) {
@@ -279,8 +282,10 @@ public class GameController {
             response.status = "error";
             response.message = "Không thể sử dụng thẻ này vào lúc này!";
         }
-
+        // 9.1.7 (GameController.fillGameState)
+        // Cập nhật trạng thái game
         fillGameState(response);
+        // 9.1.8 Trả response về frontend
         return response;
     }
 

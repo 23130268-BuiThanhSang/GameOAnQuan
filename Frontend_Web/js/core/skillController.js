@@ -4,15 +4,23 @@
  */
 
 const SkillController = {
+    // 9.1.1 Người chơi chọn thẻ kỹ năng
+    // → Trigger từ UI (click event) → gọi vào SkillController.activateSkill()
+
+    // 9.1.2 Kiểm tra điều kiện sử dụng (đúng lượt / thẻ đặc biệt)
+    // 9.2.1 Nếu sai lượt → từ chối
+
     activateSkill: function(cardElement, cardId, sloganText) {
-
+        // [SkillController.activateSkill]
+        // Xác định owner của thẻ (player 1 hoặc 2)
         const ownerId = cardElement.closest('#skill-tray-p1') ? 1 : 2;
-
+        // 9.1.2 + 9.2.1 (SkillController.activateSkill)
         if (cardId !== 'SEIZE_COMMAND' && ownerId !== GameController.currentPlayerId) {
             alert("Chưa tới lượt của bạn, cất tay đi!");
             return;
         }
-
+        // 9.1.3 (SkillController.activateSkill)
+        // Kích hoạt animation
         GameController.isAnimating = true;
 
         const rect = cardElement.getBoundingClientRect();
@@ -35,9 +43,14 @@ const SkillController = {
         const tl = gsap.timeline({
             onComplete: async () => {
                 gsap.to(overlay, {autoAlpha: 0, duration: 0.3});
+
+                // 9.1.3 (SkillController.activateSkill)
+                // Xóa thẻ khỏi UI sau animation
                 cardElement.remove();
 
                 // 11.1.3: Kết thúc hiệu ứng, Client kiểm tra loại thẻ. Nếu là thẻ tác dụng ngay (Instant Cast), Client gọi API gửi trực tiếp xuống Backend.
+                // 9.1.5 (ApiClient.sendUseSkill)
+                // Gửi request tới backend (không cần target)
                 if (isInstantCast) {
                     try {
                         let responseData;
@@ -57,14 +70,15 @@ const SkillController = {
                             // DOUBLE_CAPTURE dùng endpoint cũ
                             responseData = await ApiClient.sendUseSkill(ownerId, cardId, -1);
                         }
-
+                        // 9.4.1 (Frontend xử lý lỗi backend)
                         if (!responseData || responseData.status === "error") {
                             alert(responseData?.message || "Lỗi khi dùng thẻ!");
                         } else {
                             if (typeof AudioController !== 'undefined') {
                                 AudioController.play('drop');
                             }
-
+                            // 9.1.8 (BoardRender.renderFullState)
+                            // Update UI theo state mới từ backend
                             BoardRender.renderFullState(responseData);
                         }
                     } catch (e) {
@@ -74,6 +88,8 @@ const SkillController = {
                     GameController.isAnimating = false;
                 } else {
                     // 11.1.4: Nếu là thẻ chọn mục tiêu, Client gán ID thẻ vào pendingSkillId và làm sáng các ô cờ hợp lệ để chờ người chơi click chọn.
+                    // 9.1.4 (SkillController.highlightTargets)
+                    // Chờ người chơi chọn mục tiêu
                     GameController.pendingSkillId = cardId;
                     SkillController.highlightTargets(cardId, ownerId);
 
@@ -140,11 +156,15 @@ const SkillController = {
             el.classList.remove('targetable-hole');
         });
     },
-
+    // 9.1.4 Người chơi chọn target
+    // 9.3.1 Validate target
+    // 9.1.5 Gửi API
     handleSkillTargeting: async function(clickedHoleId, skillId) {
+        // [SkillController.handleSkillTargeting]
+        // Convert UI → backend index
         const index = GameController.getBackendIndex(clickedHoleId);
         const playerId = GameController.currentPlayerId;
-
+        // 9.3.1 (SkillController.handleSkillTargeting)
         if (skillId === 'LOCK_TILE') {
             let start = playerId === 1 ? 6 : 0;
             let end = playerId === 1 ? 10 : 4;
@@ -166,8 +186,9 @@ const SkillController = {
         this.clearHighlights();
 
         try {
+            // 9.1.5 (ApiClient.sendUseSkill)
             const responseData = await ApiClient.sendUseSkill(playerId, skillId, index);
-
+            // 9.4.1.Nếu backend xử lý lỗi → trả thông báo lỗi
             if (!responseData || responseData.status === "error") {
                 alert("Lỗi khi sử dụng kỹ năng!");
                 GameController.pendingSkillId = null;
@@ -208,6 +229,7 @@ const SkillController = {
             GameController.isAnimating = false;
             SkillController.clearHighlights();
             setTimeout(() => {
+                // 9.1.8 (BoardRender.renderFullState)
                 BoardRender.renderFullState(responseData);
             }, 50);
 
